@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
+<title>FinVault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+/* ─────────────────────────────────────────────────────────
+   FINVAULT — iOS / Instagram-grade design system
+   Philosophy: Dark canvas · Vivid glass · Liquid depth
+   Every surface is a pane of back-lit frosted glass
+   Color bleeds through from behind like a phone screen
+   ───────────────────────────────────────────────────────── */
+:root{
+  /* Core palette — vivid, saturated, Apple-spec */
+  --ios-blue:    #0A84FF;
+  --ios-indigo:  #5E5CE6;
+  --ios-purple:  #BF5AF2;
+  --ios-pink:    #FF375F;
+  --ios-red:     #FF453A;
+  --ios-orange:  #FF9F0A;
+  --ios-yellow:  #FFD60A;
+  --ios-green:   #30D158;
+  --ios-teal:    #40CBE0;
+  --ios-mint:    #63E6E2;
+
+  /* Dark surface system */
+  --bg-base:    #000000;
+  --bg-1:       #0a0a0f;
+  --bg-2:       rgba(28,28,36,0.95);
+  --bg-3:       rgba(44,44,56,0.8);
+
+  /* Glass layers — key to the depth illusion */
+  --glass-1: rgba(255,255,255,0.06);
+  --glass-2: rgba(255,255,255,0.10);
+  --glass-3: rgba(255,255,255,0.16);
+  --glass-border: rgba(255,255,255,0.12);
+  --glass-border-bright: rgba(255,255,255,0.22);
+  --glass-blur: blur(40px) saturate(200%) brightness(1.1);
+  --glass-blur-sm: blur(20px) saturate(180%);
+
+  /* Typography */
+  --text-primary:   rgba(255,255,255,0.96);
+  --text-secondary: rgba(255,255,255,0.60);
+  --text-tertiary:  rgba(255,255,255,0.36);
+  --text-quartery:  rgba(255,255,255,0.22);
+
+  /* Semantic shadows */
+  --shadow-sm:  0 2px 8px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(255,255,255,0.06);
+  --shadow-md:  0 8px 32px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.08);
+  --shadow-lg:  0 20px 60px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.10);
+  --shadow-xl:  0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08);
+
+  /* Motion */
+  --spring: cubic-bezier(0.34,1.56,0.64,1);
+  --snap:   cubic-bezier(0.25,0.46,0.45,0.94);
+  --ease:   cubic-bezier(0.4,0,0.2,1);
+
+  /* Radius */
+  --r-xs: 8px; --r-sm: 12px; --r-md: 16px; --r-lg: 22px; --r-xl: 28px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg-1);
+  color:var(--text-primary);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  cursor:default;
+}
+
+/* ── ANIMATED MESH BACKGROUND ──────────────────────────
+   Instagram/iOS-style: deep dark canvas with living
+   color blobs bleeding through from behind the glass.
+   ──────────────────────────────────────────────────── */
+#mesh{
+  position:fixed;inset:0;z-index:0;
+  background:var(--bg-base);
+  overflow:hidden;
+  pointer-events:none;
+}
+#mesh::before{
+  content:'';
+  position:absolute;inset:-50%;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%,  rgba(10,132,255,0.18)  0%,transparent 55%),
+    radial-gradient(ellipse 50% 60% at 80% 10%,  rgba(94,92,230,0.15)   0%,transparent 55%),
+    radial-gradient(ellipse 70% 40% at 70% 80%,  rgba(48,209,88,0.10)   0%,transparent 55%),
+    radial-gradient(ellipse 55% 55% at 10% 80%,  rgba(255,55,95,0.12)   0%,transparent 55%),
+    radial-gradient(ellipse 45% 45% at 90% 50%,  rgba(191,90,242,0.10)  0%,transparent 55%),
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(64,203,224,0.08)  0%,transparent 60%);
+  animation:meshDrift 20s ease-in-out infinite alternate;
+}
+#mesh::after{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 40% 40% at 30% 60%,  rgba(255,159,10,0.07)  0%,transparent 50%),
+    radial-gradient(ellipse 35% 35% at 65% 35%,  rgba(10,132,255,0.12)  0%,transparent 50%);
+  animation:meshDrift2 25s ease-in-out infinite alternate;
+}
+@keyframes meshDrift{
+  0%  {transform:translate(0,0) scale(1)}
+  33% {transform:translate(3%,2%) scale(1.03)}
+  66% {transform:translate(-2%,3%) scale(0.98)}
+  100%{transform:translate(2%,-2%) scale(1.02)}
+}
+@keyframes meshDrift2{
+  0%  {transform:translate(0,0) scale(1)}
+  50% {transform:translate(-4%,2%) scale(1.05)}
+  100%{transform:translate(3%,-3%) scale(0.97)}
+}
+
+/* Fine grain texture overlay — adds tactile feel */
+#grain{
+  position:fixed;inset:0;z-index:0;
+  opacity:0.035;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px;
+}
+
+/* ── PROGRESS BAR ─────────────────────────────────── */
+#prog{
+  position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;
+  background:linear-gradient(90deg,var(--ios-blue),var(--ios-indigo),var(--ios-purple));
+  width:0%;transition:width 0.4s var(--snap);
+  box-shadow:0 0 12px rgba(10,132,255,0.8);
+}
+
+/* ── TOAST ────────────────────────────────────────── */
+#toast{
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);
+  z-index:9999;
+  padding:12px 20px;border-radius:var(--r-lg);
+  background:rgba(28,28,36,0.95);
+  backdrop-filter:var(--glass-blur-sm);-webkit-backdrop-filter:var(--glass-blur-sm);
+  border:0.5px solid var(--glass-border-bright);
+  box-shadow:var(--shadow-lg);
+  font-size:13.5px;font-weight:600;letter-spacing:-0.1px;
+  color:var(--text-primary);
+  white-space:nowrap;
+  opacity:0;transition:all 0.36s var(--spring);pointer-events:none;
+}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+#toast.ok  {border-color:rgba(48,209,88,0.4);color:#30D158}
+#toast.err {border-color:rgba(255,69,58,0.4);color:#FF453A}
+
+/* ── APP SHELL ────────────────────────────────────── */
+#app{position:relative;z-index:1;min-height:100vh}
+
+/* ═══════════════════════════════════════════════════
+   AUTH — the "face" people see first
+   Full-bleed glass card, frosted, centered
+   ═══════════════════════════════════════════════════ */
+#auth-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
+.auth-wrap{
+  width:100%;max-width:400px;
+  animation:authIn 0.7s var(--spring) both;
+}
+@keyframes authIn{
+  from{opacity:0;transform:translateY(32px) scale(0.95);filter:blur(4px)}
+  to  {opacity:1;transform:none;filter:none}
+}
+
+/* Logo mark */
+.logo-wrap{text-align:center;margin-bottom:32px}
+.logo-mark{
+  width:80px;height:80px;margin:0 auto 18px;
+  background:linear-gradient(145deg,#1a1a2e,#16213e);
+  border-radius:24px;
+  border:0.5px solid rgba(255,255,255,0.15);
+  box-shadow:
+    0 0 0 1px rgba(10,132,255,0.3),
+    0 8px 32px rgba(10,132,255,0.25),
+    0 0 60px rgba(94,92,230,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  display:flex;align-items:center;justify-content:center;
+  animation:logoGlow 3s ease-in-out infinite;
+}
+@keyframes logoGlow{
+  0%,100%{box-shadow:0 0 0 1px rgba(10,132,255,0.3),0 8px 32px rgba(10,132,255,0.25),0 0 60px rgba(94,92,230,0.15),inset 0 1px 0 rgba(255,255,255,0.1)}
+  50%    {box-shadow:0 0 0 1px rgba(94,92,230,0.5),0 12px 48px rgba(94,92,230,0.35),0 0 80px rgba(191,90,242,0.2),inset 0 1px 0 rgba(255,255,255,0.15)}
+}
+.logo-mark svg{width:38px;height:38px}
+.logo-name{
+  font-size:30px;font-weight:800;letter-spacing:-1px;
+  background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,0.7) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.logo-sub{
+  font-size:13px;color:var(--text-tertiary);letter-spacing:0.04em;
+  margin-top:4px;font-weight:400;
+}
+
+/* Auth glass card */
+.auth-card{
+  background:var(--glass-1);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:0.5px solid var(--glass-border);
+  border-radius:var(--r-xl);
+  box-shadow:var(--shadow-xl);
+  padding:28px 28px 24px;
+  position:relative;overflow:hidden;
+}
+/* Top shimmer line — the hallmark of glass */
+.auth-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.5) 30%,
+    rgba(255,255,255,0.8) 50%,
+    rgba(255,255,255,0.5) 70%,
+    transparent 100%);
+}
+/* Subtle inner glow */
+.auth-card::after{
+  content:'';
+  position:absolute;inset:0;border-radius:var(--r-xl);
+  background:linear-gradient(135deg,rgba(255,255,255,0.04) 0%,transparent 60%);
+  pointer-events:none;
+}
+
+.auth-heading{
+  font-size:22px;font-weight:700;letter-spacing:-0.5px;
+  color:var(--text-primary);margin-bottom:22px;
+}
+.auth-tabs{display:flex;gap:0;margin-bottom:22px;background:rgba(255,255,255,0.05);border-radius:var(--r-sm);padding:3px}
+.auth-tab{
+  flex:1;padding:8px;border-radius:9px;border:none;background:transparent;
+  font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;
+  transition:all 0.2s var(--snap);letter-spacing:-0.1px;
+}
+.auth-tab.active{
+  background:rgba(255,255,255,0.12);color:var(--text-primary);
+  box-shadow:0 2px 8px rgba(0,0,0,0.3),0 0 0 0.5px rgba(255,255,255,0.1);
+}
+
+/* ── FIELDS ───────────────────────────────────────── */
+.field{margin-bottom:14px}
+.field label{
+  display:block;font-size:11.5px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--text-tertiary);margin-bottom:7px;
+}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,0.07);
+  border:0.5px solid rgba(255,255,255,0.12);
+  border-radius:var(--r-sm);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:400;
+  outline:none;transition:all 0.18s var(--snap);
+  -webkit-appearance:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:rgba(10,132,255,0.6);
+  background:rgba(10,132,255,0.08);
+  box-shadow:0 0 0 3px rgba(10,132,255,0.15),inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.field input::placeholder{color:var(--text-quaternary,rgba(255,255,255,0.2))}
+.field select option{background:#1c1c24;color:#fff}
+.field textarea{resize:vertical;min-height:76px}
+
+/* ── BUTTONS ──────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px 20px;border-radius:var(--r-sm);border:none;cursor:pointer;
+  font-family:'Inter',sans-serif;font-weight:600;font-size:14px;letter-spacing:-0.2px;
+  transition:all 0.18s var(--snap);white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;
+}
+.btn:active{transform:scale(0.97)}
+
+/* Shimmer on hover */
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.08) 50%,transparent 60%);
+  transform:translateX(-100%);transition:transform 0.4s;
+}
+.btn:hover::after{transform:translateX(100%)}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--ios-blue) 0%,var(--ios-indigo) 100%);
+  color:#fff;width:100%;
+  box-shadow:0 4px 20px rgba(10,132,255,0.4),0 1px 4px rgba(10,132,255,0.3),inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.btn-primary:hover{
+  box-shadow:0 8px 32px rgba(10,132,255,0.5),0 2px 8px rgba(10,132,255,0.3);
+  transform:translateY(-1px);
+}
+
+.btn-glass{
+  background:var(--glass-2);color:var(--text-primary);
+  border:0.5px solid var(--glass-border);
+  backdrop-filter:var(--glass-blur-sm);-webkit-backdrop-filter:var(--glass-blur-sm);
+  box-shadow:var(--shadow-sm);
+}
+.btn-glass:hover{background:var(--glass-3)}
+
+.btn-danger{
+  background:rgba(255,69,58,0.15);color:var(--ios-red);
+  border:0.5px solid rgba(255,69,58,0.25);
+}
+.btn-danger:hover{background:rgba(255,69,58,0.25)}
+
+.btn-success{
+  background:rgba(48,209,88,0.12);color:var(--ios-green);
+  border:0.5px solid rgba(48,209,88,0.2);
+}
+.btn-success:hover{background:rgba(48,209,88,0.22)}
+
+.btn-orange{
+  background:rgba(255,159,10,0.12);color:var(--ios-orange);
+  border:0.5px solid rgba(255,159,10,0.2);
+}
+
+.btn-sm {padding:8px 14px;font-size:13px;border-radius:var(--r-xs)}
+.btn-xs {padding:5px 10px;font-size:12px;border-radius:7px}
+
+.err-msg{font-size:13px;color:var(--ios-red);margin-bottom:12px;font-weight:500;letter-spacing:-0.1px}
+.ok-msg {font-size:13px;color:var(--ios-green);margin-bottom:12px;font-weight:500;letter-spacing:-0.1px;line-height:1.5}
+.auth-switch{margin-top:14px;text-align:center;font-size:13px;color:var(--text-tertiary)}
+.auth-switch a{color:var(--ios-blue);cursor:pointer;font-weight:600;text-decoration:none}
+.verify-notice{
+  background:rgba(255,159,10,0.1);border:0.5px solid rgba(255,159,10,0.25);
+  border-radius:var(--r-xs);padding:11px 14px;font-size:13px;
+  color:rgba(255,159,10,0.9);display:flex;gap:10px;align-items:flex-start;
+  margin-bottom:14px;line-height:1.5;
+}
+
+/* ═══════════════════════════════════════════════════
+   MAIN APP
+   ═══════════════════════════════════════════════════ */
+#main-app{display:none;flex-direction:column;min-height:100vh}
+
+/* ── TOP NAV ─────────────────────────────────────── */
+.topnav{
+  position:sticky;top:0;z-index:200;
+  height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;
+  background:rgba(10,10,15,0.75);
+  backdrop-filter:blur(40px) saturate(200%);-webkit-backdrop-filter:blur(40px) saturate(200%);
+  border-bottom:0.5px solid rgba(255,255,255,0.08);
+}
+.nav-brand{
+  display:flex;align-items:center;gap:9px;
+  font-size:17px;font-weight:800;letter-spacing:-0.5px;
+  color:var(--text-primary);
+}
+.nav-brand-icon{
+  width:28px;height:28px;background:linear-gradient(135deg,var(--ios-blue),var(--ios-indigo));
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(10,132,255,0.4);
+}
+
+.nav-tabs{display:flex;overflow-x:auto;scrollbar-width:none;flex:1;margin:0 12px}
+.nav-tabs::-webkit-scrollbar{display:none}
+.ntab{
+  padding:0 13px;height:56px;display:flex;align-items:center;
+  font-size:13px;font-weight:500;color:var(--text-tertiary);
+  border:none;background:transparent;cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;
+  transition:color 0.15s,border-color 0.15s;letter-spacing:-0.1px;
+}
+.ntab:hover{color:var(--text-secondary)}
+.ntab.active{color:var(--ios-blue);border-bottom-color:var(--ios-blue);font-weight:600}
+
+.mobile-tabs{
+  display:none;overflow-x:auto;scrollbar-width:none;
+  background:rgba(10,10,15,0.85);backdrop-filter:blur(30px);
+  border-bottom:0.5px solid rgba(255,255,255,0.07);padding:0 4px;
+}
+.mobile-tabs::-webkit-scrollbar{display:none}
+@media(max-width:820px){.nav-tabs{display:none}.mobile-tabs{display:flex}}
+.mtab{
+  padding:11px 13px;flex-shrink:0;
+  font-size:12px;font-weight:500;color:var(--text-tertiary);
+  border:none;background:transparent;cursor:pointer;
+  border-bottom:2px solid transparent;transition:color 0.15s;
+}
+.mtab.active{color:var(--ios-blue);border-bottom-color:var(--ios-blue);font-weight:600}
+
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--ios-blue),var(--ios-indigo));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#fff;cursor:pointer;
+  box-shadow:0 2px 12px rgba(10,132,255,0.4);
+  transition:transform 0.18s var(--spring);
+}
+.avatar:hover{transform:scale(1.08)}
+.admin-badge{
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;
+  background:rgba(255,204,10,0.12);color:rgba(255,204,10,0.9);
+  border:0.5px solid rgba(255,204,10,0.25);letter-spacing:0.06em;text-transform:uppercase;
+}
+.nav-name{font-size:13px;color:var(--text-secondary);font-weight:500;letter-spacing:-0.1px}
+@media(max-width:600px){.nav-name{display:none}}
+
+/* ── TICKER ───────────────────────────────────────── */
+.ticker-wrap{
+  overflow:hidden;height:30px;
+  background:rgba(255,255,255,0.03);
+  border-bottom:0.5px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;
+}
+.ticker-inner{
+  display:flex;gap:52px;white-space:nowrap;
+  animation:ticker 32s linear infinite;
+  font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--text-tertiary);
+}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tick-item span{color:var(--ios-blue);margin-left:5px;font-variant-numeric:tabular-nums}
+
+/* ── MAIN CONTENT ─────────────────────────────────── */
+.main-content{flex:1;padding:20px;max-width:1320px;margin:0 auto;width:100%}
+@media(max-width:600px){.main-content{padding:14px}}
+
+/* ── TAB PANELS ───────────────────────────────────── */
+.tab-panel{display:none;animation:tabIn 0.24s var(--snap) both}
+.tab-panel.active{display:block}
+@keyframes tabIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── GLASS CARD — the fundamental surface ─────────── */
+.card{
+  background:var(--glass-1);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:0.5px solid var(--glass-border);
+  border-radius:var(--r-md);
+  box-shadow:var(--shadow-md);
+  position:relative;overflow:hidden;
+}
+/* Top highlight shimmer on every card */
+.card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),rgba(255,255,255,0.35),rgba(255,255,255,0.15),transparent);
+  z-index:1;pointer-events:none;
+}
+
+/* ── STAT CARDS ───────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;margin-bottom:20px}
+.stat-card{
+  padding:18px 16px 16px;cursor:default;
+  transition:transform 0.22s var(--spring),box-shadow 0.22s var(--snap);
+}
+.stat-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:var(--shadow-lg)}
+
+/* Colored glow on each stat card */
+.stat-card-blue  {border-color:rgba(10,132,255,0.2)!important;box-shadow:var(--shadow-md),0 0 0 0.5px rgba(10,132,255,0.1)}
+.stat-card-green {border-color:rgba(48,209,88,0.2)!important;box-shadow:var(--shadow-md),0 0 0 0.5px rgba(48,209,88,0.1)}
+.stat-card-red   {border-color:rgba(255,69,58,0.2)!important;box-shadow:var(--shadow-md),0 0 0 0.5px rgba(255,69,58,0.1)}
+.stat-card-orange{border-color:rgba(255,159,10,0.2)!important;box-shadow:var(--shadow-md),0 0 0 0.5px rgba(255,159,10,0.1)}
+.stat-card-purple{border-color:rgba(191,90,242,0.2)!important;box-shadow:var(--shadow-md),0 0 0 0.5px rgba(191,90,242,0.1)}
+.stat-card-indigo{border-color:rgba(94,92,230,0.2)!important;box-shadow:var(--shadow-md),0 0 0 0.5px rgba(94,92,230,0.1)}
+
+.stat-icon{
+  width:36px;height:36px;border-radius:10px;
+  margin-bottom:12px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+.stat-label{
+  font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--text-tertiary);margin-bottom:7px;
+}
+.stat-val{
+  font-size:clamp(18px,3vw,26px);font-weight:800;letter-spacing:-0.8px;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.stat-sub{font-size:11px;color:var(--text-tertiary);margin-top:7px;font-weight:400;letter-spacing:-0.1px}
+
+.c-blue   {color:var(--ios-blue)}
+.c-green  {color:var(--ios-green)}
+.c-red    {color:var(--ios-red)}
+.c-orange {color:var(--ios-orange)}
+.c-purple {color:var(--ios-purple)}
+.c-indigo {color:var(--ios-indigo)}
+.c-teal   {color:var(--ios-teal)}
+.c-pink   {color:var(--ios-pink)}
+.c-yellow {color:var(--ios-yellow)}
+
+.bg-blue   {background:rgba(10,132,255,0.15)}
+.bg-green  {background:rgba(48,209,88,0.12)}
+.bg-red    {background:rgba(255,69,58,0.12)}
+.bg-orange {background:rgba(255,159,10,0.12)}
+.bg-purple {background:rgba(191,90,242,0.12)}
+.bg-indigo {background:rgba(94,92,230,0.12)}
+
+/* ── SECTION HEADER ───────────────────────────────── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.section-title{
+  font-size:17px;font-weight:700;letter-spacing:-0.4px;color:var(--text-primary);
+  display:flex;align-items:center;gap:8px;
+}
+.s-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ── TABLES ───────────────────────────────────────── */
+.table-wrap{overflow-x:auto;border-radius:var(--r-md)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{
+  padding:11px 16px;text-align:left;white-space:nowrap;
+  font-size:10.5px;font-weight:700;color:var(--text-tertiary);
+  text-transform:uppercase;letter-spacing:0.08em;
+  border-bottom:0.5px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.03);
+}
+tbody tr{border-bottom:0.5px solid rgba(255,255,255,0.05);transition:background 0.12s}
+tbody tr:last-child{border:none}
+tbody tr:hover{background:rgba(255,255,255,0.04)}
+tbody td{padding:13px 16px;vertical-align:middle;color:rgba(255,255,255,0.75)}
+@media(max-width:640px){tbody td,thead th{padding:10px 12px}}
+
+/* ── BADGES ───────────────────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:0.03em;
+}
+.b-blue  {background:rgba(10,132,255,0.15);color:var(--ios-blue);border:0.5px solid rgba(10,132,255,0.25)}
+.b-green {background:rgba(48,209,88,0.12);color:var(--ios-green);border:0.5px solid rgba(48,209,88,0.2)}
+.b-red   {background:rgba(255,69,58,0.12);color:var(--ios-red);border:0.5px solid rgba(255,69,58,0.2)}
+.b-orange{background:rgba(255,159,10,0.12);color:var(--ios-orange);border:0.5px solid rgba(255,159,10,0.2)}
+.b-purple{background:rgba(191,90,242,0.12);color:var(--ios-purple);border:0.5px solid rgba(191,90,242,0.2)}
+.b-yellow{background:rgba(255,214,10,0.12);color:var(--ios-yellow);border:0.5px solid rgba(255,214,10,0.2)}
+.b-gray  {background:rgba(255,255,255,0.08);color:var(--text-secondary);border:0.5px solid rgba(255,255,255,0.12)}
+
+.a-pos{color:var(--ios-green);font-weight:700;font-variant-numeric:tabular-nums}
+.a-neg{color:var(--ios-red);font-weight:700;font-variant-numeric:tabular-nums}
+.a-neu{color:var(--ios-blue);font-weight:700;font-variant-numeric:tabular-nums}
+.a-org{color:var(--ios-orange);font-weight:700;font-variant-numeric:tabular-nums}
+.muted{color:var(--text-tertiary);font-size:12px}
+.fw600{font-weight:600}
+
+/* ── MODAL ────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  width:100%;max-width:540px;
+  background:rgba(20,20,30,0.96);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:0.5px solid rgba(255,255,255,0.14);
+  border-radius:var(--r-xl);
+  box-shadow:var(--shadow-xl),0 0 80px rgba(10,132,255,0.12);
+  padding:28px 28px 24px;position:relative;
+  animation:modalIn 0.3s var(--spring) both;
+  max-height:90vh;overflow-y:auto;
+}
+.modal::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),rgba(255,255,255,0.7),rgba(255,255,255,0.4),transparent);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:none}}
+.modal-close{
+  position:absolute;top:14px;right:14px;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.1);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text-tertiary);font-size:13px;transition:all 0.15s;
+}
+.modal-close:hover{background:rgba(255,69,58,0.15);color:var(--ios-red)}
+.modal-title{
+  font-size:20px;font-weight:700;letter-spacing:-0.5px;color:var(--text-primary);
+  margin-bottom:20px;padding-right:36px;
+}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions .btn{flex:1}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.two-col{grid-template-columns:1fr}}
+
+/* ── DASHBOARD ────────────────────────────────────── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+@media(max-width:768px){.dash-grid{grid-template-columns:1fr}}
+.info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);
+  font-size:13.5px;
+}
+.info-row:last-child{border:none}
+.info-key{font-size:12px;font-weight:500;color:var(--text-tertiary);letter-spacing:-0.1px}
+
+/* ── PDF ZONE ─────────────────────────────────────── */
+.pdf-zone{
+  border:1.5px dashed rgba(255,255,255,0.12);border-radius:var(--r-lg);
+  padding:44px 24px;text-align:center;cursor:pointer;
+  transition:all 0.2s var(--snap);background:rgba(255,255,255,0.02);
+  position:relative;
+}
+.pdf-zone:hover,.pdf-zone.drag-over{
+  border-color:rgba(10,132,255,0.5);
+  background:rgba(10,132,255,0.06);
+}
+.pdf-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.pdf-zone-icon{font-size:44px;margin-bottom:14px;display:block;opacity:0.7}
+.pdf-zone-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.pdf-zone-sub{font-size:13px;color:var(--text-tertiary)}
+
+.parse-result{
+  background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.08);
+  border-radius:var(--r-md);margin-top:14px;overflow:hidden;
+}
+.parse-row{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-bottom:0.5px solid rgba(255,255,255,0.05);font-size:13px;
+  transition:background 0.12s;
+}
+.parse-row:last-child{border:none}
+.parse-row:hover{background:rgba(255,255,255,0.04)}
+.parse-check{width:17px;height:17px;border-radius:5px;cursor:pointer;accent-color:var(--ios-blue);flex-shrink:0}
+.parse-type{width:64px;flex-shrink:0}
+.parse-desc{flex:1;color:rgba(255,255,255,0.7);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.parse-date{font-size:11.5px;color:var(--text-tertiary);white-space:nowrap}
+.parse-amt{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:13.5px}
+
+/* ── EMPTY ────────────────────────────────────────── */
+.empty{text-align:center;padding:60px 20px}
+.empty-icon{font-size:40px;margin-bottom:14px;opacity:0.4;display:block}
+.empty p{font-size:14px;color:var(--text-tertiary);font-weight:500;letter-spacing:-0.1px}
+
+/* ── SPINNER ──────────────────────────────────────── */
+.spinner{
+  width:16px;height:16px;border-radius:50%;flex-shrink:0;
+  border:2px solid rgba(255,255,255,0.2);border-top-color:#fff;
+  animation:spin 0.65s linear infinite;display:inline-block;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── FINANCIAL YEAR / MONTH FILTERS ──────────────────── */
+.filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;padding:12px 14px;background:var(--glass-1);border:0.5px solid var(--glass-border);border-radius:var(--r-sm);}
+.filter-bar select{padding:7px 12px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.14);border-radius:8px;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:13px;outline:none;cursor:pointer;}
+.filter-bar select option{background:#1c1c28;color:#fff}
+.filter-bar input[type=text]{padding:7px 12px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.14);border-radius:8px;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:13px;outline:none;width:180px;}
+.filter-bar input::placeholder{color:var(--text-tertiary)}
+.filter-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-tertiary);white-space:nowrap}
+.filter-spacer{flex:1}
+.month-strip{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.month-pill{padding:5px 12px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);color:var(--text-tertiary);transition:all 0.15s;white-space:nowrap;}
+.month-pill:hover{background:rgba(255,255,255,0.1);color:var(--text-primary)}
+.month-pill.active{background:rgba(10,132,255,0.2);border-color:rgba(10,132,255,0.4);color:var(--ios-blue);}
+.month-pill.has-data::after{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ios-green);margin-left:5px;vertical-align:middle;}
+.bulk-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:12px;background:rgba(255,69,58,0.08);border:0.5px solid rgba(255,69,58,0.2);border-radius:var(--r-sm);animation:tabIn 0.2s var(--snap);}
+.bulk-count{font-size:13px;font-weight:600;color:var(--ios-red);flex:1}
+.month-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;}
+.ms-card{padding:12px 14px;background:var(--glass-1);border:0.5px solid var(--glass-border);border-radius:var(--r-sm);}
+.ms-label{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:4px}
+.ms-val{font-size:18px;font-weight:800;letter-spacing:-0.5px;font-variant-numeric:tabular-nums}
+input[type=checkbox].row-cb{width:15px;height:15px;accent-color:var(--ios-blue);cursor:pointer}
+
+/* ── SCROLLBAR ────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.22)}
+</style>
+</head>
+<body>
+
+<!-- Background system -->
+<div id="mesh"></div>
+<div id="grain"></div>
+<div id="prog"></div>
+<div id="toast"></div>
+
+<div id="app">
+
+<!-- ══════════════════════════════════
+     AUTH SCREEN
+     ══════════════════════════════════ -->
+<div id="auth-screen">
+ <div class="auth-wrap">
+  <div class="logo-wrap">
+   <div class="logo-mark">
+    <svg viewBox="0 0 38 38" fill="none">
+     <path d="M19 5L33 13V25L19 33L5 25V13L19 5Z" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="rgba(255,255,255,0.06)"/>
+     <path d="M19 12L27 17V27L19 32L11 27V17L19 12Z" fill="rgba(10,132,255,0.3)" stroke="rgba(10,132,255,0.7)" stroke-width="1"/>
+     <circle cx="19" cy="19" r="4" fill="white" opacity="0.9"/>
+     <circle cx="19" cy="19" r="2" fill="var(--ios-blue)"/>
+    </svg>
+   </div>
+   <div class="logo-name">FinVault</div>
+   <div class="logo-sub">Personal Finance Ledger</div>
+  </div>
+
+  <!-- Tab switcher -->
+  <div class="auth-card">
+   <div class="auth-tabs">
+    <button class="auth-tab active" id="tab-login" onclick="showView('login')">Sign In</button>
+    <button class="auth-tab" id="tab-reg"   onclick="showView('reg')">Create Account</button>
+   </div>
+
+   <!-- LOGIN -->
+   <div id="login-view">
+    <div id="l-err" class="err-msg" style="display:none"></div>
+    <div id="l-verify" class="verify-notice" style="display:none">
+     <span>⚠️</span>
+     <div>Email not verified. <a href="#" onclick="resendVerif()" style="color:var(--ios-orange);font-weight:700">Resend link</a></div>
+    </div>
+    <div class="field"><label>Email</label>
+     <input type="email" id="l-user" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field"><label>Password</label>
+     <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" style="margin-top:4px" onclick="doLogin()">Sign In</button>
+   </div>
+
+   <!-- REGISTER -->
+   <div id="reg-view" style="display:none">
+    <div id="r-err" class="err-msg" style="display:none"></div>
+    <div id="r-ok"  class="ok-msg"  style="display:none"></div>
+    <div class="field"><label>Full Name</label>
+     <input type="text" id="r-name" placeholder="Sachin Dabas">
+    </div>
+    <div class="field"><label>Email</label>
+     <input type="email" id="r-user" placeholder="you@example.com">
+    </div>
+    <div class="field"><label>Password</label>
+     <input type="password" id="r-pass" placeholder="Minimum 8 characters">
+    </div>
+    <button class="btn btn-primary" style="margin-top:4px" onclick="doRegister()">Create Account</button>
+    <div class="auth-switch" style="margin-top:14px;font-size:12.5px;color:var(--text-tertiary)">
+     A verification email will be sent to confirm your account.
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<!-- ══════════════════════════════════
+     MAIN APP
+     ══════════════════════════════════ -->
+<div id="main-app">
+
+ <nav class="topnav">
+  <div class="nav-brand">
+   <div class="nav-brand-icon">
+    <svg viewBox="0 0 18 18" fill="none" width="16" height="16">
+     <path d="M9 2L15 5.5V12.5L9 16L3 12.5V5.5L9 2Z" stroke="white" stroke-width="1.2" fill="rgba(255,255,255,0.15)"/>
+     <circle cx="9" cy="9" r="2" fill="white" opacity="0.9"/>
+    </svg>
+   </div>
+   FinVault
+  </div>
+  <div class="nav-tabs" id="nav-tabs"></div>
+  <div class="nav-right">
+   <span id="nav-badge" class="admin-badge" style="display:none">Admin</span>
+   <span id="nav-name" class="nav-name"></span>
+   <div class="avatar" id="nav-avatar" title="Account" onclick="showLogoutMenu()">S</div>
+  </div>
+ </nav>
+
+ <div class="mobile-tabs" id="mobile-tabs"></div>
+
+ <!-- Ticker -->
+ <div class="ticker-wrap">
+  <div class="ticker-inner">
+   <span class="tick-item">Net Balance<span id="t-net">₹0</span></span>
+   <span class="tick-item">Income<span id="t-inc">₹0</span></span>
+   <span class="tick-item">Expenses<span id="t-exp">₹0</span></span>
+   <span class="tick-item">Loans Out<span id="t-loan">₹0</span></span>
+   <span class="tick-item">Bank Debt<span id="t-debt">₹0</span></span>
+   <span class="tick-item">Interest Paid<span id="t-int">₹0</span></span>
+   <span class="tick-item">Net Balance<span id="t-net2">₹0</span></span>
+   <span class="tick-item">Income<span id="t-inc2">₹0</span></span>
+   <span class="tick-item">Expenses<span id="t-exp2">₹0</span></span>
+   <span class="tick-item">Loans Out<span id="t-loan2">₹0</span></span>
+   <span class="tick-item">Bank Debt<span id="t-debt2">₹0</span></span>
+   <span class="tick-item">Interest Paid<span id="t-int2">₹0</span></span>
+  </div>
+ </div>
+
+ <div class="main-content">
+  <div id="panel-dashboard"  class="tab-panel"></div>
+  <div id="panel-income"     class="tab-panel"></div>
+  <div id="panel-expenses"   class="tab-panel"></div>
+  <div id="panel-loans-given"class="tab-panel"></div>
+  <div id="panel-bank-loans" class="tab-panel"></div>
+  <div id="panel-interest"   class="tab-panel"></div>
+  <div id="panel-import"     class="tab-panel"></div>
+  <div id="panel-users"      class="tab-panel"></div>
+ </div>
+</div>
+
+</div><!-- #app -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalBg(event)">
+ <div class="modal" id="modal-box">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <div id="modal-content"></div>
+ </div>
+</div>
+
+<script>
+if(typeof pdfjsLib!=='undefined')pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+/* ── API ─────────────────────────────────────────── */
+let TOKEN=localStorage.getItem('fv_token')||null;
+async function api(method,path,body){
+  const r=await fetch('/api'+path,{method,headers:{'Content-Type':'application/json',...(TOKEN?{Authorization:'Bearer '+TOKEN}:{})},body:body?JSON.stringify(body):undefined});
+  const d=await r.json();if(!r.ok)throw d;return d;
+}
+const CACHE={transactions:[],loans_given:[],bank_loans:[],interest_payments:[],users:[]};
+
+/* ── FINANCIAL YEAR & MONTH FILTER STATE ─────────────── */
+// Indian FY: April to March  e.g. FY 2025-26 = Apr 2025 – Mar 2026
+const FY_MONTHS=['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+const FY_MONTH_FULL=['April','May','June','July','August','September','October','November','December','January','February','March'];
+
+function getCurrentFY(){
+  const now=new Date();
+  const m=now.getMonth()+1; // 1-12
+  return m>=4?now.getFullYear():now.getFullYear()-1; // FY start year
+}
+
+function fyYears(){
+  // Collect all unique FY years from transactions + loans
+  const years=new Set();
+  const all=[...CACHE.transactions,...CACHE.loans_given,...CACHE.interest_payments];
+  for(const t of all){
+    const d=new Date(t.date||t.startDate);
+    if(!isNaN(d)){
+      const m=d.getMonth()+1,y=d.getFullYear();
+      years.add(m>=4?y:y-1);
+    }
+  }
+  years.add(getCurrentFY());
+  return [...years].sort((a,b)=>b-a);
+}
+
+// Convert FY index (0=Apr,1=May,...,11=Mar) to {year,month} based on FY start year
+function fyIdxToYearMonth(fyStart,idx){
+  if(idx<=8){return{year:fyStart,month:idx+4}}   // Apr(4)..Dec(12)
+  else{return{year:fyStart+1,month:idx-8}}        // Jan(1)..Mar(3)
+}
+
+// Get YYYY-MM string for a FY month index
+function fyIdxToKey(fyStart,idx){
+  const{year,month}=fyIdxToYearMonth(fyStart,idx);
+  return`${year}-${String(month).padStart(2,'0')}`;
+}
+
+// Filter data by selected FY + month
+function filterByPeriod(data,dateField,fyStart,monthIdx){
+  return data.filter(item=>{
+    const d=new Date(item[dateField]);
+    if(isNaN(d))return false;
+    const y=d.getFullYear(),m=d.getMonth()+1;
+    const itemFY=m>=4?y:y-1;
+    if(itemFY!==fyStart)return false;
+    if(monthIdx===-1)return true; // all months in FY
+    const{year:fy,month:fm}=fyIdxToYearMonth(fyStart,monthIdx);
+    return y===fy&&m===fm;
+  });
+}
+
+// Get month key (YYYY-MM) of a data item
+function itemMonthKey(item,field='date'){
+  const d=new Date(item[field]);
+  if(isNaN(d))return'';
+  return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+// Current filter state
+let SEL_FY=getCurrentFY();
+let SEL_MONTH=-1; // -1 = all
+let SEL_IDS=new Set(); // selected row IDs for bulk delete
+
+function fyLabel(s){return`FY ${s}-${String(s+1).slice(-2)}`}
+
+// Build FY selector HTML — uses shared setFY() to update global state
+function fySelector(id,renderFn){
+  const years=fyYears();
+  return`<select id="${id}" onchange="setFY(this.value,'${renderFn}')">
+    ${years.map(y=>`<option value="${y}" ${y===SEL_FY?'selected':''}>${fyLabel(y)}</option>`).join('')}
+  </select>`;
+}
+
+function setFY(val,renderFn){
+  SEL_FY=parseInt(val);SEL_MONTH=-1;
+  // Reset all selections
+  INC_SEL=new Set();EXP_SEL=new Set();LOAN_SEL=new Set();INT_SEL=new Set();
+  // Call the appropriate render function
+  ({renderIncome,renderExpenses,renderLoansGiven,renderInterest,renderDashboard}[renderFn]||renderDashboard)();
+}
+
+// Build month strip HTML for a given data set (highlights months with data)
+function monthStrip(dataKeys,onClickFn){
+  return`<div class="month-strip">
+    <div class="month-pill ${SEL_MONTH===-1?'active':''}" onclick="${onClickFn}(-1)">All</div>
+    ${FY_MONTHS.map((m,i)=>{
+      const key=fyIdxToKey(SEL_FY,i);
+      const hasData=dataKeys.has(key);
+      return`<div class="month-pill ${SEL_MONTH===i?'active':''} ${hasData?'has-data':''}" onclick="${onClickFn}(${i})">${m}</div>`;
+    }).join('')}
+  </div>`;
+}
+
+// Build bulk-action bar
+function bulkBar(count,deleteAllFn,selectAllFn,deselectFn){
+  if(count===0)return'';
+  return`<div class="bulk-bar">
+    <span class="bulk-count">${count} selected</span>
+    <button class="btn btn-glass btn-xs" onclick="${selectAllFn}()">Select All</button>
+    <button class="btn btn-glass btn-xs" onclick="${deselectFn}()">Deselect All</button>
+    <button class="btn btn-danger btn-sm" onclick="${deleteAllFn}()">🗑 Delete Selected</button>
+  </div>`;
+}
+async function loadAll(){
+  prog(40);
+  try{
+    const[tx,lo,ba,in_]= await Promise.all([api('GET','/transactions'),api('GET','/loans-given'),api('GET','/bank-loans'),api('GET','/interest-payments')]);
+    CACHE.transactions=tx;CACHE.loans_given=lo;CACHE.bank_loans=ba;CACHE.interest_payments=in_;
+    if(CU.role==='admin')CACHE.users=await api('GET','/users');
+    updateTicker();
+  }catch(e){toast('Sync error','err')}
+  prog(0);
+}
+function prog(p){const el=document.getElementById('prog');el.style.width=p+'%';if(!p)setTimeout(()=>el.style.width='0%',500)}
+
+/* ── AUTH ────────────────────────────────────────── */
+let CU=null,UNVERIF_EMAIL=null;
+
+function showView(v){
+  document.getElementById('login-view').style.display=v==='login'?'block':'none';
+  document.getElementById('reg-view').style.display=v==='reg'?'block':'none';
+  document.getElementById('tab-login').classList.toggle('active',v==='login');
+  document.getElementById('tab-reg').classList.toggle('active',v==='reg');
+  ['l-err','l-verify','r-err','r-ok'].forEach(hide);
+}
+
+async function doLogin(){
+  const u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;
+  if(!u||!p){show('l-err','Enter email and password');return}
+  const btn=document.querySelector('#login-view .btn-primary');
+  btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
+  try{
+    const d=await api('POST','/auth/login',{username:u,password:p});
+    TOKEN=d.token;localStorage.setItem('fv_token',TOKEN);CU=d.user;
+    hide('l-err');hide('l-verify');await bootApp();
+  }catch(e){
+    if(e.error==='EMAIL_NOT_VERIFIED'){UNVERIF_EMAIL=u;show('l-verify','')}
+    else show('l-err',e.error||'Sign in failed');
+  }finally{btn.innerHTML='Sign In';btn.disabled=false}
+}
+
+async function resendVerif(){
+  if(!UNVERIF_EMAIL)return;
+  try{await api('POST','/auth/resend-verification',{username:UNVERIF_EMAIL});toast('Verification email sent ✓','ok')}
+  catch(e){toast(e.error||'Error','err')}
+}
+
+async function doRegister(){
+  const name=document.getElementById('r-name').value.trim(),u=document.getElementById('r-user').value.trim(),p=document.getElementById('r-pass').value;
+  if(!name||!u||!p){show('r-err','All fields required');return}
+  if(p.length<8){show('r-err','Password must be 8+ characters');return}
+  const btn=document.querySelector('#reg-view .btn-primary');
+  btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
+  try{
+    const data=await api('POST','/auth/register',{username:u,password:p,name});
+    hide('r-err');
+    if(data.message==='SMTP_NOT_CONFIGURED'){
+      show('r-ok','✅ Account created! You can sign in now.');
+    } else {
+      show('r-ok','✅ Account created! Check '+u+' for a verification email, then sign in.');
+    }
+    document.getElementById('r-name').value='';document.getElementById('r-user').value='';document.getElementById('r-pass').value='';
+  }catch(e){show('r-err',e.error||'Registration failed')}
+  finally{btn.innerHTML='Create Account';btn.disabled=false}
+}
+
+function doLogout(){
+  CU=null;TOKEN=null;localStorage.removeItem('fv_token');
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  showView('login');
+  document.getElementById('l-user').value='';document.getElementById('l-pass').value='';
+}
+
+/* ── BOOT ─────────────────────────────────────────── */
+const TABS=[
+  {id:'dashboard',label:'Dashboard'},
+  {id:'income',label:'Income'},
+  {id:'expenses',label:'Expenses'},
+  {id:'loans-given',label:'Loans Given'},
+  {id:'bank-loans',label:'Bank Loans'},
+  {id:'interest',label:'Interest'},
+  {id:'import',label:'📄 Import PDF'},
+];
+async function bootApp(){
+  document.getElementById('auth-screen').style.display='none';
+  const a=document.getElementById('main-app');a.style.display='flex';a.style.flexDirection='column';
+  document.getElementById('nav-avatar').textContent=CU.name[0].toUpperCase();
+  document.getElementById('nav-name').textContent=CU.name;
+  document.getElementById('nav-badge').style.display=CU.role==='admin'?'inline':'none';
+  const all=CU.role==='admin'?[...TABS,{id:'users',label:'Users'}]:TABS;
+  document.getElementById('nav-tabs').innerHTML=all.map(t=>`<button class="ntab" data-id="${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('');
+  document.getElementById('mobile-tabs').innerHTML=all.map(t=>`<button class="mtab" data-id="${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('');
+  await loadAll();switchTab('dashboard');
+}
+let AT='';
+function switchTab(id){
+  AT=id;
+  document.querySelectorAll('.ntab,.mtab').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+id));
+  ({dashboard:renderDashboard,income:renderIncome,expenses:renderExpenses,'loans-given':renderLoansGiven,'bank-loans':renderBankLoans,interest:renderInterest,import:renderImport,users:renderUsers}[id]||(_=>_))();
+}
+
+/* ── TICKER ───────────────────────────────────────── */
+function updateTicker(){
+  const tx=CACHE.transactions,lo=CACHE.loans_given,ba=CACHE.bank_loans,in_=CACHE.interest_payments;
+  const inc=tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp=tx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const net=inc-exp,lout=lo.filter(l=>!l.returned).reduce((s,l)=>s+l.amount,0);
+  const debt=ba.filter(l=>l.active).reduce((s,l)=>s+l.principal,0),intP=in_.reduce((s,p)=>s+p.amount,0);
+  ['net','inc','exp','loan','debt','int'].forEach((k,i)=>{
+    const val=[net,inc,exp,lout,debt,intP][i];
+    ['t-'+k,'t-'+k+'2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(val)});
+  });
+}
+
+/* ── DASHBOARD ────────────────────────────────────── */
+function renderDashboard(){
+  // FY-scoped data
+  const tx=filterByPeriod(CACHE.transactions,'date',SEL_FY,-1);
+  const lo=filterByPeriod(CACHE.loans_given,'date',SEL_FY,-1);
+  const ba=CACHE.bank_loans; // bank loans not FY-filtered (ongoing)
+  const in_=filterByPeriod(CACHE.interest_payments,'date',SEL_FY,-1);
+
+  const inc=tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp=tx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const net=inc-exp;
+  const lout=lo.filter(l=>!l.returned).reduce((s,l)=>s+l.amount,0);
+  const lrec=lo.filter(l=>l.returned).reduce((s,l)=>s+l.amount,0);
+  const debt=ba.filter(b=>b.active).reduce((s,b)=>s+b.principal,0);
+  const intP=in_.reduce((s,p)=>s+p.amount,0);
+  const recent=[...tx].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
+  const pending=lo.filter(l=>!l.returned).slice(0,5);
+
+  // Monthly breakdown for FY bar chart (text-based)
+  const monthlyInc=FY_MONTHS.map((_,i)=>{
+    const k=fyIdxToKey(SEL_FY,i);
+    return tx.filter(t=>t.type==='income'&&itemMonthKey(t,'date')===k).reduce((s,t)=>s+t.amount,0);
+  });
+  const monthlyExp=FY_MONTHS.map((_,i)=>{
+    const k=fyIdxToKey(SEL_FY,i);
+    return tx.filter(t=>t.type==='expense'&&itemMonthKey(t,'date')===k).reduce((s,t)=>s+t.amount,0);
+  });
+  const maxVal=Math.max(...monthlyInc,...monthlyExp,1);
+
+  document.getElementById('panel-dashboard').innerHTML=`
+  <div class="filter-bar" style="margin-bottom:20px">
+   <span class="filter-label">Financial Year</span>
+   ${fySelector('dash-fy','renderDashboard')}
+   <span style="font-size:12px;color:var(--text-tertiary);margin-left:8px">${fyLabel(SEL_FY)}</span>
+   <span class="filter-spacer"></span>
+   <span style="font-size:12px;color:var(--text-tertiary)">Apr ${SEL_FY} — Mar ${SEL_FY+1}</span>
+  </div>
+  <div class="stats-grid">
+   <div class="card stat-card stat-card-green">
+    <div class="stat-icon bg-green"><svg width="17" height="17" fill="none" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" stroke="var(--ios-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="stat-label">Total Income</div>
+    <div class="stat-val c-green">${fmt(inc)}</div>
+    <div class="stat-sub">${tx.filter(t=>t.type==='income').length} entries</div>
+   </div>
+   <div class="card stat-card stat-card-red">
+    <div class="stat-icon bg-red"><svg width="17" height="17" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="var(--ios-red)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="stat-label">Total Expenses</div>
+    <div class="stat-val c-red">${fmt(exp)}</div>
+    <div class="stat-sub">${tx.filter(t=>t.type==='expense').length} entries</div>
+   </div>
+   <div class="card stat-card ${net>=0?'stat-card-blue':'stat-card-red'}">
+    <div class="stat-icon ${net>=0?'bg-blue':'bg-red'}"><svg width="17" height="17" fill="none" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" stroke="${net>=0?'var(--ios-blue)':'var(--ios-red)'}" stroke-width="2"/></svg></div>
+    <div class="stat-label">Net Balance</div>
+    <div class="stat-val ${net>=0?'c-blue':'c-red'}">${fmt(net)}</div>
+    <div class="stat-sub">income minus expenses</div>
+   </div>
+   <div class="card stat-card stat-card-orange">
+    <div class="stat-icon bg-orange"><svg width="17" height="17" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z" stroke="var(--ios-orange)" stroke-width="2" stroke-linecap="round"/></svg></div>
+    <div class="stat-label">Loans Outstanding</div>
+    <div class="stat-val c-orange">${fmt(lout)}</div>
+    <div class="stat-sub">${lo.filter(l=>!l.returned).length} pending · ${fmt(lrec)} recovered</div>
+   </div>
+   <div class="card stat-card stat-card-purple">
+    <div class="stat-icon bg-purple"><svg width="17" height="17" fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="var(--ios-purple)" stroke-width="2"/></svg></div>
+    <div class="stat-label">Bank Debt</div>
+    <div class="stat-val c-purple">${fmt(debt)}</div>
+    <div class="stat-sub">${ba.filter(b=>b.active).length} active loans</div>
+   </div>
+   <div class="card stat-card stat-card-indigo">
+    <div class="stat-icon bg-indigo"><svg width="17" height="17" fill="none" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23" stroke="var(--ios-indigo)" stroke-width="2" stroke-linecap="round"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="var(--ios-indigo)" stroke-width="2" stroke-linecap="round"/></svg></div>
+    <div class="stat-label">Interest Paid</div>
+    <div class="stat-val c-indigo">${fmt(intP)}</div>
+    <div class="stat-sub">${in_.length} payments</div>
+   </div>
+  </div>
+
+  <!-- Monthly breakdown bar chart -->
+  <div class="card" style="padding:20px;margin-bottom:16px">
+   <div style="font-size:13px;font-weight:700;color:var(--text-secondary);margin-bottom:16px;letter-spacing:-0.1px">Monthly Breakdown — ${fyLabel(SEL_FY)}</div>
+   <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:4px;align-items:end;height:80px">
+    ${FY_MONTHS.map((m,i)=>{
+      const inc2=monthlyInc[i],exp2=monthlyExp[i];
+      const incH=Math.max(2,Math.round((inc2/maxVal)*72));
+      const expH=Math.max(2,Math.round((exp2/maxVal)*72));
+      const active=fyIdxToKey(SEL_FY,i)===fyIdxToKey(SEL_FY,new Date().getMonth()>=3?new Date().getMonth()-3:new Date().getMonth()+9);
+      return`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="onDashMonthDrill(${i})" title="${FY_MONTH_FULL[i]}: In ${fmt(inc2)} / Out ${fmt(exp2)}">
+        <div style="width:100%;display:flex;gap:1px;align-items:flex-end;height:72px">
+          <div style="flex:1;background:rgba(48,209,88,0.6);border-radius:2px 2px 0 0;height:${incH}px;transition:height 0.3s"></div>
+          <div style="flex:1;background:rgba(255,69,58,0.6);border-radius:2px 2px 0 0;height:${expH}px;transition:height 0.3s"></div>
+        </div>
+        <div style="font-size:9px;color:${active?'var(--ios-blue)':'var(--text-tertiary)'};font-weight:${active?700:500}">${m}</div>
+       </div>`;
+    }).join('')}
+   </div>
+   <div style="display:flex;gap:16px;margin-top:10px">
+    <span style="font-size:11px;color:var(--text-tertiary);display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:rgba(48,209,88,0.6);border-radius:2px;display:inline-block"></span>Income</span>
+    <span style="font-size:11px;color:var(--text-tertiary);display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:rgba(255,69,58,0.6);border-radius:2px;display:inline-block"></span>Expenses</span>
+   </div>
+  </div>
+
+  <div class="dash-grid">
+   <div>
+    <div class="section-header">
+     <div class="section-title"><div class="s-dot" style="background:var(--ios-blue);box-shadow:0 0 8px var(--ios-blue)"></div>Recent Transactions</div>
+    </div>
+    <div class="card table-wrap">
+     ${recent.length?`<table><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Type</th></tr></thead><tbody>
+      ${recent.map(t=>`<tr>
+       <td class="muted">${t.date}</td>
+       <td class="fw600">${t.description}</td>
+       <td class="${t.type==='income'?'a-pos':'a-neg'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</td>
+       <td><span class="badge ${t.type==='income'?'b-green':'b-red'}">${t.type}</span></td>
+      </tr>`).join('')}
+     </tbody></table>`:empty('💸','No transactions yet')}
+    </div>
+   </div>
+   <div>
+    <div class="section-header">
+     <div class="section-title"><div class="s-dot" style="background:var(--ios-orange);box-shadow:0 0 8px var(--ios-orange)"></div>Pending Loans</div>
+    </div>
+    <div class="card" style="padding:16px">
+     ${pending.length?`
+      ${pending.map(l=>`<div class="info-row"><div><div class="fw600">${l.friendName}</div><div class="muted">${l.date}</div></div><span class="a-org">${fmt(l.amount)}</span></div>`).join('')}
+      <div style="height:0.5px;background:rgba(255,255,255,0.07);margin:12px 0"></div>
+      <div class="info-row"><span class="info-key">Total Pending</span><span class="a-org">${fmt(lout)}</span></div>
+      <div class="info-row"><span class="info-key">Total Recovered</span><span class="a-pos">${fmt(lrec)}</span></div>
+     `:empty('🤝','All loans settled')}
+    </div>
+   </div>
+  </div>`;
+}
+function onDashFyChange(){SEL_FY=parseInt(document.getElementById('dash-fy').value);SEL_MONTH=-1;renderDashboard()}
+function onDashMonthDrill(i){
+  // Click a month bar → switch to that month in income tab
+  SEL_MONTH=i;switchTab('income');
+}
+
+/* ── INCOME ───────────────────────────────────────── */
+let INC_SEL=new Set(),INC_SEARCH='';
+function renderIncome(){
+  const all=CACHE.transactions.filter(t=>t.type==='income');
+  const fyData=filterByPeriod(all,'date',SEL_FY,SEL_MONTH);
+  const dataKeys=new Set(all.map(t=>itemMonthKey(t,'date')));
+  const search=INC_SEARCH.toLowerCase();
+  const data=fyData.filter(t=>!search||(t.description+t.category+t.note).toLowerCase().includes(search))
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  // Summary for selected period
+  const total=data.reduce((s,t)=>s+t.amount,0);
+
+  document.getElementById('panel-income').innerHTML=`
+  <div class="section-header">
+   <div class="section-title"><div class="s-dot" style="background:var(--ios-green);box-shadow:0 0 8px var(--ios-green)"></div>Income Records</div>
+   <button class="btn btn-success btn-sm" onclick="openTxnModal('income')">+ Add Income</button>
+  </div>
+  <div class="filter-bar">
+   <span class="filter-label">FY</span>
+   ${fySelector('inc-fy','renderIncome')}
+   <input type="text" placeholder="Search…" value="${INC_SEARCH}" oninput="INC_SEARCH=this.value;renderIncome()" style="flex:1;min-width:120px;max-width:200px">
+   <span class="filter-spacer"></span>
+   <span style="font-size:12px;color:var(--text-tertiary)">${data.length} entries · <span class="c-green">${fmt(total)}</span></span>
+  </div>
+  ${monthStrip(dataKeys,'onIncMonthClick')}
+  ${bulkBar(INC_SEL.size,'bulkDelInc','selAllInc','deselAllInc')}
+  <div class="card table-wrap">
+   ${data.length?`<table><thead><tr>
+    <th><input type="checkbox" class="row-cb" onchange="toggleAllInc(this)" ${INC_SEL.size===data.length&&data.length>0?'checked':''}></th>
+    <th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Source</th><th>Note</th><th></th>
+   </tr></thead><tbody>
+    ${data.map(t=>`<tr>
+     <td><input type="checkbox" class="row-cb" ${INC_SEL.has(t._id)?'checked':''} onchange="toggleIncRow('${t._id}',this.checked)"></td>
+     <td class="muted">${t.date}</td><td class="fw600">${t.description}</td>
+     <td><span class="badge b-blue">${t.category||'—'}</span></td>
+     <td class="a-pos">+${fmt(t.amount)}</td>
+     <td><span class="badge ${t.source==='pdf'?'b-purple':'b-gray'}">${t.source||'manual'}</span></td>
+     <td class="muted">${t.note||'—'}</td>
+     <td><button class="btn btn-danger btn-xs" onclick="delTxn('${t._id}')">Del</button></td>
+    </tr>`).join('')}
+   </tbody></table>`:empty('💰','No income for this period')}
+  </div>`;
+}
+function onIncFyChange(){SEL_FY=parseInt(document.getElementById('inc-fy').value);SEL_MONTH=-1;INC_SEL=new Set();renderIncome()}
+function onIncMonthClick(i){SEL_MONTH=i;INC_SEL=new Set();renderIncome()}
+function toggleIncRow(id,checked){if(checked)INC_SEL.add(id);else INC_SEL.delete(id);renderIncome()}
+function toggleAllInc(cb){
+  const all=CACHE.transactions.filter(t=>t.type==='income');
+  const data=filterByPeriod(all,'date',SEL_FY,SEL_MONTH);
+  if(cb.checked)data.forEach(t=>INC_SEL.add(t._id));else INC_SEL.clear();renderIncome()
+}
+function selAllInc(){
+  const all=CACHE.transactions.filter(t=>t.type==='income');
+  filterByPeriod(all,'date',SEL_FY,SEL_MONTH).forEach(t=>INC_SEL.add(t._id));renderIncome()
+}
+function deselAllInc(){INC_SEL.clear();renderIncome()}
+async function bulkDelInc(){
+  if(!INC_SEL.size)return;
+  if(!confirm(`Delete ${INC_SEL.size} income entries?`))return;
+  prog(30);
+  try{
+    await Promise.all([...INC_SEL].map(id=>api('DELETE','/transactions/'+id)));
+    CACHE.transactions=CACHE.transactions.filter(t=>!INC_SEL.has(t._id));
+    INC_SEL.clear();updateTicker();renderIncome();toast('Deleted ✓','ok');
+  }catch(e){toast(e.error||'Error','err')}
+  prog(0);
+}
+
+/* ── EXPENSES ─────────────────────────────────────── */
+let EXP_SEL=new Set(),EXP_SEARCH='';
+function renderExpenses(){
+  const all=CACHE.transactions.filter(t=>t.type==='expense');
+  const fyData=filterByPeriod(all,'date',SEL_FY,SEL_MONTH);
+  const dataKeys=new Set(all.map(t=>itemMonthKey(t,'date')));
+  const search=EXP_SEARCH.toLowerCase();
+  const data=fyData.filter(t=>!search||(t.description+t.category+t.note).toLowerCase().includes(search))
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const total=data.reduce((s,t)=>s+t.amount,0);
+
+  document.getElementById('panel-expenses').innerHTML=`
+  <div class="section-header">
+   <div class="section-title"><div class="s-dot" style="background:var(--ios-red);box-shadow:0 0 8px var(--ios-red)"></div>Expense Records</div>
+   <button class="btn btn-danger btn-sm" onclick="openTxnModal('expense')">+ Add Expense</button>
+  </div>
+  <div class="filter-bar">
+   <span class="filter-label">FY</span>
+   ${fySelector('exp-fy','renderExpenses')}
+   <input type="text" placeholder="Search…" value="${EXP_SEARCH}" oninput="EXP_SEARCH=this.value;renderExpenses()" style="flex:1;min-width:120px;max-width:200px">
+   <span class="filter-spacer"></span>
+   <span style="font-size:12px;color:var(--text-tertiary)">${data.length} entries · <span class="c-red">${fmt(total)}</span></span>
+  </div>
+  ${monthStrip(dataKeys,'onExpMonthClick')}
+  ${bulkBar(EXP_SEL.size,'bulkDelExp','selAllExp','deselAllExp')}
+  <div class="card table-wrap">
+   ${data.length?`<table><thead><tr>
+    <th><input type="checkbox" class="row-cb" onchange="toggleAllExp(this)" ${EXP_SEL.size===data.length&&data.length>0?'checked':''}></th>
+    <th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Source</th><th>Note</th><th></th>
+   </tr></thead><tbody>
+    ${data.map(t=>`<tr>
+     <td><input type="checkbox" class="row-cb" ${EXP_SEL.has(t._id)?'checked':''} onchange="toggleExpRow('${t._id}',this.checked)"></td>
+     <td class="muted">${t.date}</td><td class="fw600">${t.description}</td>
+     <td><span class="badge b-orange">${t.category||'—'}</span></td>
+     <td class="a-neg">-${fmt(t.amount)}</td>
+     <td><span class="badge ${t.source==='pdf'?'b-purple':'b-gray'}">${t.source||'manual'}</span></td>
+     <td class="muted">${t.note||'—'}</td>
+     <td><button class="btn btn-danger btn-xs" onclick="delTxn('${t._id}')">Del</button></td>
+    </tr>`).join('')}
+   </tbody></table>`:empty('🧾','No expenses for this period')}
+  </div>`;
+}
+function onExpFyChange(){SEL_FY=parseInt(document.getElementById('exp-fy').value);SEL_MONTH=-1;EXP_SEL=new Set();renderExpenses()}
+function onExpMonthClick(i){SEL_MONTH=i;EXP_SEL=new Set();renderExpenses()}
+function toggleExpRow(id,checked){if(checked)EXP_SEL.add(id);else EXP_SEL.delete(id);renderExpenses()}
+function toggleAllExp(cb){
+  const all=CACHE.transactions.filter(t=>t.type==='expense');
+  const data=filterByPeriod(all,'date',SEL_FY,SEL_MONTH);
+  if(cb.checked)data.forEach(t=>EXP_SEL.add(t._id));else EXP_SEL.clear();renderExpenses()
+}
+function selAllExp(){
+  const all=CACHE.transactions.filter(t=>t.type==='expense');
+  filterByPeriod(all,'date',SEL_FY,SEL_MONTH).forEach(t=>EXP_SEL.add(t._id));renderExpenses()
+}
+function deselAllExp(){EXP_SEL.clear();renderExpenses()}
+async function bulkDelExp(){
+  if(!EXP_SEL.size)return;
+  if(!confirm(`Delete ${EXP_SEL.size} expense entries?`))return;
+  prog(30);
+  try{
+    await Promise.all([...EXP_SEL].map(id=>api('DELETE','/transactions/'+id)));
+    CACHE.transactions=CACHE.transactions.filter(t=>!EXP_SEL.has(t._id));
+    EXP_SEL.clear();updateTicker();renderExpenses();toast('Deleted ✓','ok');
+  }catch(e){toast(e.error||'Error','err')}
+  prog(0);
+}
+
+/* ── LOANS GIVEN ──────────────────────────────────── */
+let LOAN_SEL=new Set();
+function renderLoansGiven(){
+  const all=CACHE.loans_given;
+  const fyData=filterByPeriod(all,'date',SEL_FY,SEL_MONTH);
+  const dataKeys=new Set(all.map(t=>itemMonthKey(t,'date')));
+  const data=[...fyData].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const total=data.filter(l=>!l.returned).reduce((s,l)=>s+l.amount,0);
+
+  document.getElementById('panel-loans-given').innerHTML=`
+  <div class="section-header">
+   <div class="section-title"><div class="s-dot" style="background:var(--ios-orange);box-shadow:0 0 8px var(--ios-orange)"></div>Loans Given to Friends</div>
+   <button class="btn btn-orange btn-sm" onclick="openLoanModal()">+ Record Loan</button>
+  </div>
+  <div class="filter-bar">
+   <span class="filter-label">FY</span>
+   ${fySelector('loan-fy','renderLoansGiven')}
+   <span class="filter-spacer"></span>
+   <span style="font-size:12px;color:var(--text-tertiary)">${data.length} entries · pending <span class="a-org">${fmt(total)}</span></span>
+  </div>
+  ${monthStrip(dataKeys,'onLoanMonthClick')}
+  ${bulkBar(LOAN_SEL.size,'bulkDelLoan','selAllLoan','deselAllLoan')}
+  <div class="card table-wrap">
+   ${data.length?`<table><thead><tr>
+    <th><input type="checkbox" class="row-cb" onchange="toggleAllLoan(this)"></th>
+    <th>Date</th><th>Friend</th><th>Amount</th><th>Purpose</th><th>Status</th><th>Returned</th><th>Actions</th>
+   </tr></thead><tbody>
+    ${data.map(l=>`<tr>
+     <td><input type="checkbox" class="row-cb" ${LOAN_SEL.has(l._id)?'checked':''} onchange="toggleLoanRow('${l._id}',this.checked)"></td>
+     <td class="muted">${l.date}</td><td class="fw600">${l.friendName}</td>
+     <td class="a-org">${fmt(l.amount)}</td><td class="muted">${l.purpose||'—'}</td>
+     <td><span class="badge ${l.returned?'b-green':'b-orange'}">${l.returned?'Returned':'Pending'}</span></td>
+     <td class="muted">${l.returnedOn||'—'}</td>
+     <td style="display:flex;gap:6px">
+      ${!l.returned?`<button class="btn btn-success btn-xs" onclick="markReturned('${l._id}')">✓</button>`:''}
+      <button class="btn btn-danger btn-xs" onclick="delLoan('${l._id}')">Del</button>
+     </td>
+    </tr>`).join('')}
+   </tbody></table>`:empty('🤝','No loans for this period')}
+  </div>`;
+}
+function onLoanFyChange(){SEL_FY=parseInt(document.getElementById('loan-fy').value);SEL_MONTH=-1;LOAN_SEL=new Set();renderLoansGiven()}
+function onLoanMonthClick(i){SEL_MONTH=i;LOAN_SEL=new Set();renderLoansGiven()}
+function toggleLoanRow(id,checked){if(checked)LOAN_SEL.add(id);else LOAN_SEL.delete(id);renderLoansGiven()}
+function toggleAllLoan(cb){
+  const data=filterByPeriod(CACHE.loans_given,'date',SEL_FY,SEL_MONTH);
+  if(cb.checked)data.forEach(l=>LOAN_SEL.add(l._id));else LOAN_SEL.clear();renderLoansGiven()
+}
+function selAllLoan(){filterByPeriod(CACHE.loans_given,'date',SEL_FY,SEL_MONTH).forEach(l=>LOAN_SEL.add(l._id));renderLoansGiven()}
+function deselAllLoan(){LOAN_SEL.clear();renderLoansGiven()}
+async function bulkDelLoan(){
+  if(!LOAN_SEL.size)return;
+  if(!confirm(`Delete ${LOAN_SEL.size} loan entries?`))return;
+  prog(30);
+  try{
+    await Promise.all([...LOAN_SEL].map(id=>api('DELETE','/loans-given/'+id)));
+    CACHE.loans_given=CACHE.loans_given.filter(l=>!LOAN_SEL.has(l._id));
+    LOAN_SEL.clear();updateTicker();renderLoansGiven();toast('Deleted ✓','ok');
+  }catch(e){toast(e.error||'Error','err')}
+  prog(0);
+}
+
+/* ── BANK LOANS ───────────────────────────────────── */
+function renderBankLoans(){
+  const data=[...CACHE.bank_loans].sort((a,b)=>new Date(b.startDate)-new Date(a.startDate));
+  document.getElementById('panel-bank-loans').innerHTML=`
+  <div class="section-header">
+   <div class="section-title"><div class="s-dot" style="background:var(--ios-purple);box-shadow:0 0 8px var(--ios-purple)"></div>Bank Loans</div>
+   <button class="btn btn-sm" style="background:rgba(191,90,242,0.15);color:var(--ios-purple);border:0.5px solid rgba(191,90,242,0.25)" onclick="openBankLoanModal()">+ Add Loan</button>
+  </div>
+  <div class="card table-wrap">
+   ${data.length?`<table><thead><tr><th>Start</th><th>Bank</th><th>Principal</th><th>Rate</th><th>EMI/mo</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    ${data.map(l=>`<tr>
+     <td class="muted">${l.startDate}</td><td class="fw600">${l.bankName}</td>
+     <td class="a-neg">${fmt(l.principal)}</td>
+     <td><span class="badge b-yellow">${l.interestRate}% p.a.</span></td>
+     <td class="a-org">${fmt(l.emi)}</td><td class="muted">${l.loanType||'—'}</td>
+     <td><span class="badge ${l.active?'b-orange':'b-green'}">${l.active?'Active':'Closed'}</span></td>
+     <td style="display:flex;gap:6px">
+      ${l.active?`<button class="btn btn-success btn-xs" onclick="closeBankLoan('${l._id}')">Close</button>`:''}
+      <button class="btn btn-danger btn-xs" onclick="delBankLoan('${l._id}')">Del</button>
+     </td>
+    </tr>`).join('')}
+   </tbody></table>`:empty('🏦','No bank loans recorded')}
+  </div>`;
+}
+
+/* ── INTEREST ─────────────────────────────────────── */
+let INT_SEL=new Set();
+function renderInterest(){
+  const all=CACHE.interest_payments;
+  const fyData=filterByPeriod(all,'date',SEL_FY,SEL_MONTH);
+  const dataKeys=new Set(all.map(t=>itemMonthKey(t,'date')));
+  const data=[...fyData].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const banks=CACHE.bank_loans,total=data.reduce((s,p)=>s+p.amount,0);
+
+  document.getElementById('panel-interest').innerHTML=`
+  <div class="section-header">
+   <div class="section-title"><div class="s-dot" style="background:var(--ios-indigo);box-shadow:0 0 8px var(--ios-indigo)"></div>Interest Payments</div>
+   <button class="btn btn-sm" style="background:rgba(94,92,230,0.15);color:var(--ios-indigo);border:0.5px solid rgba(94,92,230,0.25)" onclick="openInterestModal()">+ Record Payment</button>
+  </div>
+  <div class="filter-bar">
+   <span class="filter-label">FY</span>
+   ${fySelector('int-fy','renderInterest')}
+   <span class="filter-spacer"></span>
+   <span style="font-size:12px;color:var(--text-tertiary)">${data.length} payments · <span class="c-indigo">${fmt(total)}</span></span>
+  </div>
+  ${monthStrip(dataKeys,'onIntMonthClick')}
+  ${bulkBar(INT_SEL.size,'bulkDelInt','selAllInt','deselAllInt')}
+  <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:16px">
+   <div class="card stat-card stat-card-indigo">
+    <div class="stat-label">Total Interest (${SEL_MONTH===-1?fyLabel(SEL_FY):FY_MONTHS[SEL_MONTH]})</div><div class="stat-val c-indigo">${fmt(total)}</div>
+   </div>
+   <div class="card stat-card stat-card-blue">
+    <div class="stat-label">Payment Count</div><div class="stat-val c-blue">${data.length}</div>
+   </div>
+  </div>
+  <div class="card table-wrap">
+   ${data.length?`<table><thead><tr>
+    <th><input type="checkbox" class="row-cb" onchange="toggleAllInt(this)"></th>
+    <th>Date</th><th>Bank/Loan</th><th>Amount</th><th>Type</th><th>Note</th><th></th>
+   </tr></thead><tbody>
+    ${data.map(p=>{const loan=banks.find(b=>b._id===p.loanId);return`<tr>
+     <td><input type="checkbox" class="row-cb" ${INT_SEL.has(p._id)?'checked':''} onchange="toggleIntRow('${p._id}',this.checked)"></td>
+     <td class="muted">${p.date}</td><td class="fw600">${loan?loan.bankName:'—'}</td>
+     <td class="a-neg">${fmt(p.amount)}</td>
+     <td><span class="badge b-yellow">${p.paymentType||'Interest'}</span></td>
+     <td class="muted">${p.note||'—'}</td>
+     <td><button class="btn btn-danger btn-xs" onclick="delInterest('${p._id}')">Del</button></td>
+    </tr>`;}).join('')}
+   </tbody></table>`:empty('📋','No interest payments for this period')}
+  </div>`;
+}
+function onIntFyChange(){SEL_FY=parseInt(document.getElementById('int-fy').value);SEL_MONTH=-1;INT_SEL=new Set();renderInterest()}
+function onIntMonthClick(i){SEL_MONTH=i;INT_SEL=new Set();renderInterest()}
+function toggleIntRow(id,checked){if(checked)INT_SEL.add(id);else INT_SEL.delete(id);renderInterest()}
+function toggleAllInt(cb){
+  const data=filterByPeriod(CACHE.interest_payments,'date',SEL_FY,SEL_MONTH);
+  if(cb.checked)data.forEach(p=>INT_SEL.add(p._id));else INT_SEL.clear();renderInterest()
+}
+function selAllInt(){filterByPeriod(CACHE.interest_payments,'date',SEL_FY,SEL_MONTH).forEach(p=>INT_SEL.add(p._id));renderInterest()}
+function deselAllInt(){INT_SEL.clear();renderInterest()}
+async function bulkDelInt(){
+  if(!INT_SEL.size)return;
+  if(!confirm(`Delete ${INT_SEL.size} interest entries?`))return;
+  prog(30);
+  try{
+    await Promise.all([...INT_SEL].map(id=>api('DELETE','/interest-payments/'+id)));
+    CACHE.interest_payments=CACHE.interest_payments.filter(p=>!INT_SEL.has(p._id));
+    INT_SEL.clear();updateTicker();renderInterest();toast('Deleted ✓','ok');
+  }catch(e){toast(e.error||'Error','err')}
+  prog(0);
+}
+
+/* ── PDF IMPORT ───────────────────────────────────── */
+let PARSED=[];
+function renderImport(){
+  document.getElementById('panel-import').innerHTML=`
+  <div class="section-header">
+   <div class="section-title"><div class="s-dot" style="background:var(--ios-purple);box-shadow:0 0 8px var(--ios-purple)"></div>Import Bank Statement (PDF)</div>
+  </div>
+  <div class="card" style="padding:24px">
+   <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;line-height:1.7">
+    Upload your bank statement PDF. FinVault reads it client-side, extracts all credits &amp; debits,
+    detects the statement month, and lets you review before importing.
+   </p>
+   <div class="pdf-zone" id="pdf-zone">
+    <input type="file" id="pdf-input" accept=".pdf" onchange="window._pdfFile=this.files[0];handlePdf(this.files[0])">
+    <span class="pdf-zone-icon">📄</span>
+    <div class="pdf-zone-title">Drop PDF here or tap to browse</div>
+    <div class="pdf-zone-sub">Supports SBI · HDFC · ICICI · Axis · Kotak and most Indian bank formats</div>
+   </div>
+   <div id="pdf-status" style="margin-top:14px"></div>
+   <div id="pdf-results"></div>
+  </div>`;
+  const z=document.getElementById('pdf-zone');
+  z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag-over')});
+  z.addEventListener('dragleave',()=>z.classList.remove('drag-over'));
+  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f?.type==='application/pdf'){window._pdfFile=f;handlePdf(f)}else toast('Please drop a PDF file','err')});
+}
+
+async function handlePdf(file, password=''){
+  if(!file)return;
+  const statusEl=document.getElementById('pdf-status'),resultsEl=document.getElementById('pdf-results');
+  statusEl.innerHTML=`<div style="display:flex;align-items:center;gap:10px;color:var(--text-tertiary);font-size:14px"><span class="spinner" style="border-color:rgba(10,132,255,0.3);border-top-color:var(--ios-blue)"></span>Reading PDF…</div>`;
+  resultsEl.innerHTML='';
+  try{
+    const text=await pdfToText(file, password);
+    const{month,year,transactions}=parseBankPdf(text);
+    PARSED=transactions;
+    if(!transactions.length){
+      statusEl.innerHTML=`<div style="color:var(--ios-red);font-size:14px">⚠️ No transactions found. Try a different PDF or check if it's scanned/image-based.</div>`;
+      return;
+    }
+    const credits=transactions.filter(t=>t.type==='income').length;
+    const debits=transactions.filter(t=>t.type==='expense').length;
+    statusEl.innerHTML=`
+    <div style="background:rgba(48,209,88,0.08);border:0.5px solid rgba(48,209,88,0.2);border-radius:var(--r-sm);padding:12px 16px;font-size:13px;margin-bottom:14px">
+     ✅ <strong>${transactions.length} transactions</strong> found
+     ${month?`· Statement: <strong>${month} ${year}</strong>`:''}
+     · <span class="c-green">${credits} credits</span>
+     · <span class="c-red">${debits} debits</span>
+    </div>`;
+    resultsEl.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+     <div style="font-size:13px;color:var(--text-tertiary)">Review and select what to import:</div>
+     <div style="display:flex;gap:8px">
+      <button class="btn btn-glass btn-sm" onclick="selAll(true)">Select All</button>
+      <button class="btn btn-glass btn-sm" onclick="selAll(false)">Deselect All</button>
+     </div>
+    </div>
+    <div class="parse-result">
+     ${transactions.map((t,i)=>`
+     <div class="parse-row">
+      <input type="checkbox" class="parse-check" id="chk-${i}" checked>
+      <div class="parse-type"><span class="badge ${t.type==='income'?'b-green':'b-red'}" style="font-size:10.5px">${t.type==='income'?'Credit':'Debit'}</span></div>
+      <div class="parse-desc">${t.description}</div>
+      <div class="parse-date">${t.date}</div>
+      <div class="parse-amt ${t.type==='income'?'a-pos':'a-neg'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div>
+     </div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:16px">
+     <button class="btn btn-primary" style="width:auto;padding:12px 32px" onclick="importSel()">Import Selected</button>
+    </div>`;
+  }catch(e){
+    if(e.message==='PASSWORD_PROTECTED'){
+      // Show password input
+      statusEl.innerHTML=`
+      <div style="background:rgba(255,159,10,0.08);border:0.5px solid rgba(255,159,10,0.25);border-radius:var(--r-sm);padding:16px;font-size:14px;margin-bottom:4px">
+       🔒 <strong style="color:var(--ios-orange)">This PDF is password protected.</strong>
+       <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+        <input type="password" id="pdf-password" placeholder="Enter PDF password"
+         style="flex:1;padding:10px 14px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.15);border-radius:var(--r-xs);color:var(--text-primary);font-family:inherit;font-size:14px;outline:none"
+         onkeydown="if(event.key==='Enter')unlockPdf()">
+        <button class="btn btn-primary btn-sm" style="width:auto" onclick="unlockPdf()">Unlock</button>
+       </div>
+       <div id="pwd-err" style="color:var(--ios-red);font-size:12px;margin-top:8px;display:none">Wrong password. Try again.</div>
+      </div>`;
+      // Store file reference for retry
+      window._pdfFile=file;
+    }else{
+      statusEl.innerHTML=`<div style="color:var(--ios-red);font-size:14px">❌ ${e.message}</div>`;
+    }
+  }
+}
+
+async function unlockPdf(){
+  const pwd=document.getElementById('pdf-password')?.value||'';
+  if(!pwd){document.getElementById('pwd-err').style.display='block';document.getElementById('pwd-err').textContent='Please enter a password.';return}
+  document.getElementById('pwd-err').style.display='none';
+  if(window._pdfFile)await handlePdf(window._pdfFile, pwd);
+}
+
+async function pdfToText(file, password=''){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=async e=>{
+      try{
+        const loadingTask=pdfjsLib.getDocument({
+          data:new Uint8Array(e.target.result),
+          password: password||undefined
+        });
+        const pdf=await loadingTask.promise;
+        const pages=[];
+        for(let i=1;i<=pdf.numPages;i++){
+          const pg=await pdf.getPage(i);
+          const ct=await pg.getTextContent();
+          // Group by Y coordinate to reconstruct rows
+          const byY={};
+          for(const it of ct.items){
+            if(!it.str||!it.str.trim())continue;
+            const y=Math.round(it.transform[5]/3)*3; // snap to 3pt grid
+            if(!byY[y])byY[y]=[];
+            byY[y].push({x:it.transform[4],text:it.str.trim()});
+          }
+          // Sort rows top→bottom (PDF Y is bottom-up → descending)
+          const rows=Object.keys(byY).map(Number).sort((a,b)=>b-a)
+            .map(y=>byY[y].sort((a,b)=>a.x-b.x).map(it=>it.text).join(' '));
+          pages.push(rows.join('\n'));
+        }
+        res(pages.join('\n'));
+      }catch(err){
+        if(err.name==='PasswordException'||err.message?.includes('password')||(err.code&&err.code===1)){
+          rej(new Error('PASSWORD_PROTECTED'));
+        }else{
+          rej(err);
+        }
+      }
+    };
+    fr.onerror=rej;
+    fr.readAsArrayBuffer(file);
+  });
+}
+
+// ── BALANCE-DIFF PARSER ─────────────────────────────────
+// Core insight: every bank statement has a running balance column.
+// amount = |closing_balance - previous_balance|
+// If closing < previous → DEBIT (expense)
+// If closing > previous → CREDIT (income)
+// This works for ALL banks regardless of column layout.
+function parseBankPdf(rawText){
+  const lines=rawText.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  const fullText=lines.join(' ');
+
+  // ── Detect month/year ──────────────────────────────────
+  const mnNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const mnMap={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  let month='',year='';
+  const mFull=fullText.match(/\b(january|february|march|april|may|june|july|august|september|october|november|december)[a-z]*[,\s]+(\d{4})\b/i);
+  if(mFull){month=mFull[1].charAt(0).toUpperCase()+mFull[1].slice(1).toLowerCase();year=mFull[2]}
+  if(!month){
+    const mFrom=fullText.match(/(?:from|period)[^\d]*(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})/i);
+    if(mFrom){
+      const yr=mFrom[3].length===2?(parseInt(mFrom[3])<50?'20'+mFrom[3]:'19'+mFrom[3]):mFrom[3];
+      const d=new Date(`${yr}-${mFrom[2]}-${mFrom[1]}`);
+      if(!isNaN(d)){month=mnNames[d.getMonth()];year=yr}
+    }
+  }
+
+  // ── Helpers ────────────────────────────────────────────
+  const parseAmt=s=>{if(!s)return 0;const n=parseFloat(s.replace(/,/g,''));return isNaN(n)?0:n};
+  const parseDate=raw=>{
+    if(!raw)return null;
+    raw=raw.trim();
+    let m=raw.match(/^(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})$/);
+    if(!m)return null;
+    let[,dd,mm,yy]=m;
+    if(yy.length===2)yy=parseInt(yy)<50?'20'+yy:'19'+yy;
+    const iso=`${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+    return isNaN(new Date(iso).getTime())?null:iso;
+  };
+  const isValidDate=s=>!!parseDate(s);
+
+  // Clean description — remove refs, long numbers, amounts
+  const cleanDesc=s=>s
+    .replace(/\b[A-Z0-9]{12,}\b/g,' ')
+    .replace(/\b\d{8,}\b/g,' ')
+    .replace(/\b\d{1,3}(?:,\d{3})*\.\d{2}\b/g,' ')
+    .replace(/\s+/g,' ').trim().slice(0,80)||'Transaction';
+
+  const transactions=[];
+  const seen=new Set();
+  const addTxn=(type,dateRaw,desc,amt)=>{
+    const date=parseDate(dateRaw);
+    if(!date||amt<=0||amt>50000000)return;
+    const d=cleanDesc(desc);
+    if(d.length<2)return;
+    const key=`${date}|${amt}`;
+    if(seen.has(key))return;
+    seen.add(key);
+    transactions.push({type,date,description:d,amount:Math.round(amt*100)/100,category:type==='income'?'Bank Credit':'Bank Debit'});
+  };
+
+  // ── DETECT BANK ────────────────────────────────────────
+  const isHDFC  = /hdfc\s*bank/i.test(fullText);
+  const isICICI = /icici\s*bank/i.test(fullText);
+  const isSBI   = /state\s*bank\s*of\s*india|sbi/i.test(fullText);
+  const isAxis  = /axis\s*bank/i.test(fullText);
+  const isKotak = /kotak\s*bank|kotak\s*mahindra/i.test(fullText);
+
+  // ── FIND OPENING BALANCE ───────────────────────────────
+  // Look for "Opening Balance" label followed by a number
+  let openingBal=null;
+  const obPatterns=[
+    /opening\s+balance[^\d]*([\d,]+\.\d{2})/i,
+    /brought\s+forward[^\d]*([\d,]+\.\d{2})/i,
+    /opening\s+bal[^\d]*([\d,]+\.\d{2})/i,
+    /op\s*bal[^\d]*([\d,]+\.\d{2})/i,
+  ];
+  for(const pat of obPatterns){
+    const m=fullText.match(pat);
+    if(m){openingBal=parseAmt(m[1]);break}
+  }
+
+  // ── STEP 1: COLLECT TRANSACTION ROWS ──────────────────
+  // UNIVERSAL approach — no bank detection needed.
+  //
+  // Key insight from studying real PDFs:
+  // Every transaction row contains a DATE somewhere near the start.
+  // After PDF.js row-extraction, a transaction row looks like ONE of:
+  //   a) "08.03.2026 UPI/JYOTI/... 100.00 455.92"        (ICICI - date at start)
+  //   b) "1 08.03.2026 UPI/JYOTI/... 100.00 455.92"      (ICICI - rownum+date)
+  //   c) "01/03/26 UPI-ANAMAR... 9.25 56,323.97"         (HDFC - date at start)
+  //   d) "01/04/2024 BY TRANSFER... 50,000.00 1,23,456.78" (SBI)
+  //   e) "15-Mar-24 UPI/..." (some Axis/Kotak formats)
+  //
+  // PROBLEM: ICICI PDFs often extract the row number on a SEPARATE line
+  // from the date+narration, so the line looks like just "1" alone.
+  // The actual transaction data is on the NEXT line starting with the date.
+  //
+  // SOLUTION: Strip standalone row numbers, then match by DATE position.
+
+  // Step 1a: Pre-process lines — strip standalone row numbers and page metadata
+  const cleanLines = [];
+  for(const line of lines){
+    // Skip lines that are ONLY a number 1-999 (ICICI row numbers on own line)
+    if(/^\d{1,3}$/.test(line)) continue;
+    // Skip obvious non-transaction lines
+    if(/^(page\s*no|s\s*no|s\.no|transaction\s*date|cheque\s*number|narration|date\s+narration|withdrawal|deposit|balance|opening|closing|dear\s|never\s*share|www\.|dial\s|please\s*call|generated\s*on|registered\s*office|sincerly|team\s+[a-z]|branch\s*:|address\s*:|account\s*no|cust\s*id|account\s*type|rtgs|micr|joint\s*holder|nomination|from\s*:\s*\d|to\s*:\s*\d)/i.test(line)) continue;
+    cleanLines.push(line);
+  }
+
+  // Step 1b: Date patterns — matches dates at START of a line (with optional leading row number)
+  // Supported: DD.MM.YYYY  DD/MM/YYYY  DD-MM-YYYY  DD/MM/YY  DD-MMM-YY  DD-MMM-YYYY
+  // KEY FIX: use (?:\s|$) instead of \s+ so dates alone on their own line also match
+  // ICICI puts dates alone on a line — "08.03.2026" with nothing after it
+  const DATE_RE = /^(?:\d{1,4}\s+)?(\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4}|\d{1,2}[\/\-][A-Za-z]{3}[\/\-]\d{2,4})(?:\s|$)/;
+
+  // Extended parseDate that also handles DD-MMM-YY / DD-MMM-YYYY
+  const parseDateExt = raw => {
+    if(!raw) return null;
+    raw = raw.trim();
+    // Standard: DD.MM.YYYY etc
+    let m = raw.match(/^(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})$/);
+    if(m){
+      let [,dd,mm,yy]=m;
+      if(yy.length===2) yy=parseInt(yy)<50?'20'+yy:'19'+yy;
+      const iso=`${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+      return isNaN(new Date(iso).getTime())?null:iso;
+    }
+    // DD-MMM-YY or DD-MMM-YYYY: "15-Mar-24" or "15-Mar-2024"
+    m = raw.match(/^(\d{1,2})[\/\-]([A-Za-z]{3})[\/\-](\d{2,4})$/);
+    if(m){
+      const mnMap2={jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
+      const mm2=mnMap2[m[2].toLowerCase()];
+      if(!mm2) return null;
+      let yy=m[3]; if(yy.length===2) yy=parseInt(yy)<50?'20'+yy:'19'+yy;
+      const iso=`${yy}-${mm2}-${m[1].padStart(2,'0')}`;
+      return isNaN(new Date(iso).getTime())?null:iso;
+    }
+    return null;
+  };
+
+  const isValidDateExt = s => !!parseDateExt(s);
+
+  const isTxnRowStart = line => {
+    const m = line.match(DATE_RE);
+    if(!m) return null;
+    // Extract just the date part (without leading row number)
+    const datePart = m[1];
+    if(isValidDateExt(datePart)) return datePart;
+    return null;
+  };
+
+  // Step 1c: Merge multi-line narrations into single rows
+  const txRows=[];
+  let curRow=null;
+  for(const line of cleanLines){
+    const dateStr = isTxnRowStart(line);
+    if(dateStr !== null){
+      if(curRow!==null) txRows.push(curRow);
+      curRow = line;
+    } else if(curRow!==null){
+      // Append continuation lines (narration wraps to next line)
+      // But stop appending if this line looks like another bank's header
+      const isHeader=/^(account|branch|address|phone|email|ifsc|micr)/i.test(line);
+      if(!isHeader) curRow = curRow + ' ' + line;
+    }
+  }
+  if(curRow!==null) txRows.push(curRow);
+
+  // ── STEP 2: UNIVERSAL BALANCE-DIFF PARSER ─────────────
+  // Works for any bank. No bank-specific logic needed.
+  let prevBal = openingBal;
+
+  for(const row of txRows){
+    const dateStr = isTxnRowStart(row);
+    if(!dateStr) continue;
+    const txDate = dateStr;
+
+    // Extract ALL amounts: numbers like 1,23,456.78 or 9.25 or 50,021.00
+    const AMT_RE2 = /\b(\d{1,3}(?:,\d{2,3})*\.\d{2})\b/g;
+    const amts=[];
+    let am;
+    while((am=AMT_RE2.exec(row))!==null){
+      const v=parseAmt(am[1]);
+      if(v>0&&v<100000000) amts.push(v);
+    }
+    if(amts.length<2) continue; // need at least one txn amount + balance
+
+    const closingBal = amts[amts.length-1]; // always the last number = running balance
+
+    // Bootstrap prevBal if not known yet (no opening balance in statement)
+    if(prevBal===null){
+      if(amts.length>=2){
+        const firstAmt=amts[amts.length-2];
+        // Guess: assume first tx is a debit (most common for typical statements)
+        // We'll correct it via balance direction on subsequent rows
+        const nl=row.toLowerCase();
+        const firstIsCredit=/salary|received|neft cr|imps cr|payment from phone|cheq@icici|deposit/i.test(nl);
+        prevBal = firstIsCredit ? closingBal - firstAmt : closingBal + firstAmt;
+      } else {
+        prevBal = closingBal; continue;
+      }
+    }
+
+    // The transaction amount = second-to-last number (or derived from balance diff)
+    const txAmt = amts[amts.length-2];
+
+    // Balance direction tells us credit vs debit — 100% reliable
+    const balDiff = closingBal - prevBal;
+    let type;
+    if(Math.abs(balDiff) < 0.05){
+      // Zero diff — skip (duplicate balance line or header)
+      prevBal = closingBal;
+      continue;
+    }
+    type = balDiff > 0 ? 'income' : 'expense';
+
+    // Build clean description
+    const desc = row
+      .replace(/^\d{1,4}\s+/, '')                              // strip leading row number
+      .replace(/\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4}/g,' ') // strip all dates
+      .replace(/\d{1,2}[\/\-][A-Za-z]{3}[\/\-]\d{2,4}/g,' ') // strip MMM dates
+      .replace(/\b\d{1,3}(?:,\d{2,3})*\.\d{2}\b/g,' ')        // strip amounts
+      .replace(/\b\d{9,}\b/g,' ')                               // strip long refs
+      .replace(/[\/\\|@]+/g,' ')
+      .replace(/\s+/g,' ').trim();
+
+    prevBal = closingBal;
+
+    // Use actual balance diff as amount (more accurate than txAmt col when 3+ amounts)
+    const actualAmt = Math.abs(balDiff);
+    // But if txAmt is very close, use txAmt (preserves original precision)
+    const finalAmt = Math.abs(txAmt - actualAmt) < 1 ? txAmt : actualAmt;
+
+    if(finalAmt>0 && desc.length>=2) addTxn(type, txDate, desc, finalAmt);
+  }
+
+  // ── Detect month from transactions if not found ────────
+  if(!month&&transactions.length>0){
+    const d=new Date(transactions[0].date);
+    if(!isNaN(d)){month=mnNames[d.getMonth()];year=String(d.getFullYear())}
+  }
+
+  // Deduplicate (same date + same amount = same transaction)
+  const final=[],seen2=new Set();
+  for(const t of transactions){
+    const k=`${t.date}|${t.amount}`;
+    if(!seen2.has(k)){seen2.add(k);final.push(t)}
+  }
+  return{month,year,transactions:final.slice(0,500)};
+}
+
+function selAll(v){PARSED.forEach((_,i)=>{const el=document.getElementById('chk-'+i);if(el)el.checked=v})}
+async function importSel(){
+  const sel=PARSED.filter((_,i)=>{const el=document.getElementById('chk-'+i);return el&&el.checked});
+  if(!sel.length){toast('Select at least one transaction','err');return}
+  const btn=document.querySelector('#panel-import .btn-primary'),prev=btn.innerHTML;
+  btn.innerHTML='<span class="spinner"></span> Importing…';btn.disabled=true;
+  try{
+    const r=await api('POST','/transactions/bulk',{transactions:sel});
+    CACHE.transactions=await api('GET','/transactions');updateTicker();
+    toast(`✅ ${r.inserted} transactions imported`,'ok');
+    document.getElementById('pdf-results').innerHTML=`<div style="text-align:center;padding:48px;"><div style="font-size:48px;margin-bottom:14px">✅</div><div style="font-size:17px;font-weight:700;color:var(--ios-green)">${r.inserted} transactions imported</div><div style="font-size:13px;color:var(--text-tertiary);margin-top:8px">View in Income and Expenses tabs</div></div>`;
+    document.getElementById('pdf-status').innerHTML='';
+  }catch(e){toast(e.error||'Import failed','err')}
+  finally{btn.innerHTML=prev;btn.disabled=false}
+}
+
+/* ── USERS ────────────────────────────────────────── */
+function renderUsers(){
+  if(CU.role!=='admin')return;
+  const users=CACHE.users;
+  document.getElementById('panel-users').innerHTML=`
+  <div class="section-header">
+   <div class="section-title"><div class="s-dot" style="background:var(--ios-blue);box-shadow:0 0 8px var(--ios-blue)"></div>User Management</div>
+   <button class="btn btn-primary btn-sm" style="width:auto" onclick="openUserModal()">+ Add User</button>
+  </div>
+  <div class="card table-wrap">
+   <table><thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Verified</th><th>Actions</th></tr></thead><tbody>
+    ${users.map(u=>`<tr>
+     <td style="color:var(--ios-blue);font-size:13px;font-weight:500">${u.username}</td>
+     <td class="fw600">${u.name}</td>
+     <td><span class="badge ${u.role==='admin'?'b-yellow':'b-blue'}">${u.role}</span></td>
+     <td><span class="badge ${u.verified?'b-green':'b-orange'}">${u.verified?'Verified':'Pending'}</span></td>
+     <td>${u.username!==CU.username?`<button class="btn btn-danger btn-xs" onclick="delUser('${u.username}')">Remove</button>`:`<span class="muted">you</span>`}</td>
+    </tr>`).join('')}
+   </tbody></table>
+  </div>`;
+}
+
+/* ── MODALS ───────────────────────────────────────── */
+function openModal(h){document.getElementById('modal-content').innerHTML=h;document.getElementById('modal-overlay').classList.add('open')}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
+function closeModalBg(e){if(e.target===document.getElementById('modal-overlay'))closeModal()}
+
+function openTxnModal(type){
+  const cats=type==='income'?['Salary','Freelance','Business','Investment','Rental','Gift','Other']:['Food','Rent','Transport','Shopping','Bills','Medical','Entertainment','Education','Other'];
+  openModal(`<div class="modal-title">${type==='income'?'Add Income':'Add Expense'}</div>
+   <div class="field"><label>Date</label><input type="date" id="m-date" value="${today()}"></div>
+   <div class="field"><label>Description</label><input type="text" id="m-desc" placeholder="e.g. Monthly salary"></div>
+   <div class="two-col">
+    <div class="field"><label>Amount (₹)</label><input type="number" id="m-amt" placeholder="0.00" min="0" step="0.01"></div>
+    <div class="field"><label>Category</label><select id="m-cat">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div>
+   </div>
+   <div class="field"><label>Note (optional)</label><textarea id="m-note" placeholder="Details…"></textarea></div>
+   <div class="modal-actions"><button class="btn btn-glass" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveTxn('${type}')">Save</button></div>`);
+}
+async function saveTxn(type){
+  const date=v('m-date'),desc=v('m-desc').trim(),amt=parseFloat(v('m-amt')),cat=v('m-cat'),note=v('m-note').trim();
+  if(!date||!desc||!amt||amt<=0){toast('Fill all required fields','err');return}
+  try{const doc=await api('POST','/transactions',{type,date,description:desc,amount:amt,category:cat,note});CACHE.transactions.unshift(doc);closeModal();toast(type==='income'?'Income added ✓':'Expense added ✓','ok');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error||e.message,'err')}
+}
+async function delTxn(id){
+  if(!confirm('Delete this transaction?'))return;
+  try{await api('DELETE','/transactions/'+id);CACHE.transactions=CACHE.transactions.filter(t=>t._id!==id);toast('Deleted','err');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+
+function openLoanModal(){
+  openModal(`<div class="modal-title">Record Loan to Friend</div>
+   <div class="two-col">
+    <div class="field"><label>Friend's Name</label><input type="text" id="m-fname" placeholder="Name"></div>
+    <div class="field"><label>Date</label><input type="date" id="m-date" value="${today()}"></div>
+   </div>
+   <div class="field"><label>Amount (₹)</label><input type="number" id="m-amt" placeholder="0.00" min="0" step="0.01"></div>
+   <div class="field"><label>Purpose</label><input type="text" id="m-purpose" placeholder="Reason"></div>
+   <div class="field"><label>Note</label><textarea id="m-note" placeholder="Details…"></textarea></div>
+   <div class="modal-actions"><button class="btn btn-glass" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveLoan()">Save Loan</button></div>`);
+}
+async function saveLoan(){
+  const fn=v('m-fname').trim(),dt=v('m-date'),amt=parseFloat(v('m-amt')),pu=v('m-purpose').trim(),no=v('m-note').trim();
+  if(!fn||!dt||!amt||amt<=0){toast('Fill all required fields','err');return}
+  try{const doc=await api('POST','/loans-given',{friendName:fn,date:dt,amount:amt,purpose:pu,note:no});CACHE.loans_given.unshift(doc);closeModal();toast('Loan recorded ✓','ok');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+async function markReturned(id){
+  try{const doc=await api('PATCH','/loans-given/'+id+'/return');const i=CACHE.loans_given.findIndex(l=>l._id===id);if(i>-1)CACHE.loans_given[i]=doc;toast('Marked as returned ✓','ok');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+async function delLoan(id){
+  if(!confirm('Delete?'))return;
+  try{await api('DELETE','/loans-given/'+id);CACHE.loans_given=CACHE.loans_given.filter(l=>l._id!==id);toast('Deleted','err');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+
+function openBankLoanModal(){
+  openModal(`<div class="modal-title">Add Bank Loan</div>
+   <div class="two-col">
+    <div class="field"><label>Bank / Lender</label><input type="text" id="m-bank" placeholder="SBI, HDFC…"></div>
+    <div class="field"><label>Start Date</label><input type="date" id="m-date" value="${today()}"></div>
+   </div>
+   <div class="two-col">
+    <div class="field"><label>Principal (₹)</label><input type="number" id="m-principal" placeholder="500000" min="0"></div>
+    <div class="field"><label>Rate (% p.a.)</label><input type="number" id="m-rate" placeholder="8.5" step="0.01" min="0"></div>
+   </div>
+   <div class="two-col">
+    <div class="field"><label>Monthly EMI (₹)</label><input type="number" id="m-emi" placeholder="0.00" min="0"></div>
+    <div class="field"><label>Loan Type</label><select id="m-ltype"><option>Home Loan</option><option>Personal Loan</option><option>Car Loan</option><option>Education Loan</option><option>Business Loan</option><option>Other</option></select></div>
+   </div>
+   <div class="field"><label>Note</label><textarea id="m-note" placeholder="Purpose, branch…"></textarea></div>
+   <div class="modal-actions"><button class="btn btn-glass" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveBankLoan()">Save</button></div>`);
+}
+async function saveBankLoan(){
+  const bn=v('m-bank').trim(),sd=v('m-date'),pr=parseFloat(v('m-principal')),ir=parseFloat(v('m-rate')),em=parseFloat(v('m-emi'))||0,lt=v('m-ltype'),no=v('m-note').trim();
+  if(!bn||!sd||!pr||!ir){toast('Fill all required fields','err');return}
+  try{const doc=await api('POST','/bank-loans',{bankName:bn,startDate:sd,principal:pr,interestRate:ir,emi:em,loanType:lt,note:no});CACHE.bank_loans.unshift(doc);closeModal();toast('Bank loan added ✓','ok');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+async function closeBankLoan(id){
+  try{const doc=await api('PATCH','/bank-loans/'+id+'/close');const i=CACHE.bank_loans.findIndex(l=>l._id===id);if(i>-1)CACHE.bank_loans[i]=doc;toast('Loan closed ✓','ok');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+async function delBankLoan(id){
+  if(!confirm('Delete?'))return;
+  try{await api('DELETE','/bank-loans/'+id);CACHE.bank_loans=CACHE.bank_loans.filter(l=>l._id!==id);toast('Deleted','err');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+
+function openInterestModal(){
+  const active=CACHE.bank_loans.filter(l=>l.active);
+  openModal(`<div class="modal-title">Record Interest Payment</div>
+   <div class="field"><label>Bank Loan</label><select id="m-loan">${active.length?active.map(l=>`<option value="${l._id}">${l.bankName} — ${fmt(l.principal)}</option>`).join(''):'<option value="">No active loans</option>'}</select></div>
+   <div class="two-col">
+    <div class="field"><label>Date</label><input type="date" id="m-date" value="${today()}"></div>
+    <div class="field"><label>Amount (₹)</label><input type="number" id="m-amt" placeholder="0.00" min="0" step="0.01"></div>
+   </div>
+   <div class="field"><label>Payment Type</label><select id="m-ptype"><option>Interest Only</option><option>EMI (Principal+Interest)</option><option>Partial Principal</option><option>Full Prepayment</option></select></div>
+   <div class="field"><label>Note</label><textarea id="m-note" placeholder="Reference, month…"></textarea></div>
+   <div class="modal-actions"><button class="btn btn-glass" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveInterest()">Save</button></div>`);
+}
+async function saveInterest(){
+  const loanId=v('m-loan'),dt=v('m-date'),amt=parseFloat(v('m-amt')),pt=v('m-ptype'),no=v('m-note').trim();
+  if(!loanId||!dt||!amt||amt<=0){toast('Fill all required fields','err');return}
+  try{const doc=await api('POST','/interest-payments',{loanId,date:dt,amount:amt,paymentType:pt,note:no});CACHE.interest_payments.unshift(doc);closeModal();toast('Payment recorded ✓','ok');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+async function delInterest(id){
+  if(!confirm('Delete?'))return;
+  try{await api('DELETE','/interest-payments/'+id);CACHE.interest_payments=CACHE.interest_payments.filter(p=>p._id!==id);toast('Deleted','err');updateTicker();switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+
+function openUserModal(){
+  openModal(`<div class="modal-title">Add User</div>
+   <div class="two-col">
+    <div class="field"><label>Full Name</label><input type="text" id="m-ufull" placeholder="Full name"></div>
+    <div class="field"><label>Email</label><input type="email" id="m-uname" placeholder="user@email.com"></div>
+   </div>
+   <div class="field"><label>Password</label><input type="password" id="m-upwd" placeholder="Password"></div>
+   <div class="field"><label>Role</label><select id="m-urole"><option value="user">User</option><option value="admin">Admin</option></select></div>
+   <div class="modal-actions"><button class="btn btn-glass" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Create User</button></div>`);
+}
+async function saveUser(){
+  const username=v('m-uname').trim(),name=v('m-ufull').trim(),password=v('m-upwd'),role=v('m-urole');
+  if(!username||!name||!password){toast('All fields required','err');return}
+  try{const doc=await api('POST','/users',{username,password,name,role});CACHE.users.push(doc);closeModal();toast('User created ✓','ok');switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+async function delUser(username){
+  if(!confirm(`Remove "${username}"?`))return;
+  try{await api('DELETE','/users/'+encodeURIComponent(username));CACHE.users=CACHE.users.filter(u=>u.username!==username);toast('User removed','err');switchTab(AT)}
+  catch(e){toast(e.error,'err')}
+}
+
+/* ── UTILS ────────────────────────────────────────── */
+function fmt(n){return'₹'+(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function today(){return new Date().toISOString().split('T')[0]}
+function v(id){return document.getElementById(id)?.value||''}
+function show(id,msg){const el=document.getElementById(id);if(el){if(msg)el.textContent=msg;el.style.display='block'}}
+function hide(id){const el=document.getElementById(id);if(el)el.style.display='none'}
+function empty(icon,msg){return`<div class="empty"><span class="empty-icon">${icon}</span><p>${msg}</p></div>`}
+
+let toastT;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+(type||'');
+  clearTimeout(toastT);setTimeout(()=>el.classList.add('show'),10);
+  toastT=setTimeout(()=>el.classList.remove('show'),3200);
+}
+
+/* ── LOGOUT MENU ──────────────────────────────────── */
+function showLogoutMenu(){
+  // Remove existing menu if open
+  const existing=document.getElementById('logout-menu');
+  if(existing){existing.remove();return}
+  const menu=document.createElement('div');
+  menu.id='logout-menu';
+  menu.style.cssText=`position:fixed;top:56px;right:16px;z-index:500;background:rgba(20,20,30,0.96);border:0.5px solid rgba(255,255,255,0.14);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,0.6);padding:6px;min-width:200px;animation:modalIn 0.2s var(--spring) both`;
+  menu.innerHTML=`
+    <div style="padding:10px 14px 8px;border-bottom:0.5px solid rgba(255,255,255,0.08);margin-bottom:4px">
+      <div style="font-size:13px;font-weight:700;color:var(--text-primary)">${CU.name}</div>
+      <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">${CU.username}</div>
+    </div>
+    <button onclick="doLogout()" style="width:100%;padding:9px 14px;background:transparent;border:none;cursor:pointer;text-align:left;font-size:13px;font-weight:600;color:var(--ios-red);border-radius:9px;font-family:inherit;display:flex;align-items:center;gap:8px">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Sign Out
+    </button>`;
+  document.body.appendChild(menu);
+  // Close on outside click
+  setTimeout(()=>document.addEventListener('click',function handler(e){if(!menu.contains(e.target)&&e.target.id!=='nav-avatar'){menu.remove();document.removeEventListener('click',handler)}},true),10);
+}
+
+/* ── KEYBOARD + AUTO-LOGIN ────────────────────────── */
+document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('r-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
+
+// Auto-restore session using /api/auth/me (validates token server-side)
+(async()=>{
+  if(!TOKEN)return;
+  try{
+    // Validate token and get fresh user data from server
+    const user=await api('GET','/auth/me');
+    CU={username:user.username,name:user.name,role:user.role};
+    await bootApp();
+  }catch{
+    // Token expired or invalid — clear it silently
+    TOKEN=null;localStorage.removeItem('fv_token');
+  }
+})();
+</script>
+</body>
+</html>
